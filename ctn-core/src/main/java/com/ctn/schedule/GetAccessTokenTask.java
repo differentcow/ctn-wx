@@ -38,14 +38,14 @@ public class GetAccessTokenTask{
 		System.out.println("Test");
 		System.out.println(new AccessTokenCache().getAccessToken(Constant.CACHE_ACCESS_TOKEN_KEY));*/
 		logger.info("access token url"+url);
-		AccessToken at = requestToken();
+//		AccessToken at = requestToken();
 		
 	
 		if (accessTokenCache.getCacheManager() == null) {
 			return;
 		}
 		
-		accessTokenCache.setAccessTokenCache(Constant.CACHE_ACCESS_TOKEN_KEY, at);
+		accessTokenCache.setAccessTokenCache(Constant.CACHE_ACCESS_TOKEN_KEY, new AccessToken()/*at*/);
 	}
 	/**
 	 * @return

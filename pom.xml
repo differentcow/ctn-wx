@@ -143,6 +143,7 @@
 				<configuration>
 					<url>${deploy.url}</url>
 					<server>test</server>
+                    <path>/wx</path>
 				</configuration>
 			</plugin>
 		</plugins>

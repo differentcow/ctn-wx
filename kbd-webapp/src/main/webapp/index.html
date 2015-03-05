@@ -5,38 +5,22 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title></title>
-		<script src="js/mui.min.js"></script>
-		<link href="css/mui.min.css" rel="stylesheet" />
 		<script src="js/jquery-1.8.2.min.js"></script>
-		<link href="shared/Calender/calendar.css" rel="stylesheet" />
-		<script src="shared/Calender/calendar.js"></script>
-		<script src="js/index.js"></script>
 		<style>
-			.mui-segmented-control .mui-control-item.mui-active {
-				color: #fff;
-				background-color: rgb(1,153,154);
-				font-weight: normal;
-			}
-			.mui-segmented-control{
-				border-color: rgb(1,153,154);
-			}
-			.mui-segmented-control .mui-control-item{
-				color: rgb(1,153,154);
-				font-weight: bold;
-			}
-			#cal td{
-				padding:1px;
-			}
-			#cal{
-				margin: 0px;
-			}
-			footer{
-				margin: 4px;
-			}
-			body{
-				line-height:normal;
-			}
-		</style>
+            body{ text-align:center}
+            .div{ margin:0 auto; width:400px; height:100px; border:1px solid #F00}
+        </style>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("#gen").click(function(){
+                    if($('#temp_id').val() == null || $('#temp_id').val() == ''){
+                        alert("This field is required.");
+                    }else{
+                        $('#qrcode').attr("src","/wx/service/qr/code?content="+$('#temp_id').val());
+                    }
+                });
+            });
+        </script>
 	</head>
 
 	<body>
@@ -66,9 +50,13 @@
 		</header>
 		 -->
 		<div id="cal">
-			
+            <h3>生成二维码</h3>
+			<lable>温度计编号:</lable><input id="temp_id" type="text"><button type="button" id="gen">生成</button>
 		</div>
-		<footer>
+        <div>
+            <img alt="" id="qrcode">
+        </div>
+		<!--<footer>
 			<table width="100%" style="margin-top: 5px;">
 				<tr>
 					<td style="color:rgb(73,193,202);"><img src="shared/Calender/calendar/jy.png" align="center"/><b>加油</b></td>
@@ -80,7 +68,7 @@
 					<td colspan="4" align="center" style="color: #999;padding-top: 2px;">KM为当天行程公里数</td>
 				</tr>
 			</table>
-		</footer>
+		</footer>-->
 	</body>
 
 </html>
