@@ -1,0 +1,28 @@
+
+1.日历数据格式示例  一个月哪天有记录就放入这个data数组里 一起返回
+{"data":[{
+	 "dateStr": "2015年1月22日", //日期String
+     "date":1421936520181,        //日期 毫秒
+     "mileage": 100, //里程 Number
+     "wz": true, //违章   Bool
+     "xc": false, //洗车   Bool
+     "by": false, //保养   Bool
+     "jy": true//加油     Bool
+}]}
+
+2.当日行程数据格式示例
+{"data":[
+    {
+        toc: '10L',
+        tm: '87km',
+        aoc: '7.5L',
+        route: [
+            {time: '8:12', place: '五一广场新世纪百货', mileage: '12km', oc: '1.5L'},
+            {time: '9:20', place: '开福寺南门', mileage: '50km', oc: '5L'},
+            {time: '18:12', place: '芙蓉广场', mileage: '20km', oc: '3L'},
+            {time: '20:00', place: '万达广场', mileage: '5km', oc: '0.5L'}
+        ]
+}]}
+
+3.加油日志数据示例
+{"data":[{year:'2014',mon:'01',logs:[{date:'01月01日',oil:'30.01',fee:200},{date:'01月10日',oil:'49.50',fee:300},{date:'01月18日',oil:33.01,fee:200},{date:'01月30日',oil:33.01,fee:200}]}]}

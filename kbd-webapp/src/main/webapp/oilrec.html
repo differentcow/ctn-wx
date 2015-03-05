@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>加油日志</title>
+    <link href="shared/bootstrap-min/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="shared/js/zepto.min.js"></script>
+    <script src="js/oilrec.js"></script>
+    <style>
+        body{
+            /*background: url("image/oilrec/bg.png")  50% 0px;*/
+            /*background-size: 100% 100%;*/
+            background-color: #EBEBEB;
+        }
+        .oil-nav {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .oil-nav .col-xs-4 {
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 15px;
+        }
+
+        .nav-bar {
+            color: #00afa8;
+        }
+
+        .nav-active {
+            color: #ffffff;
+            border-radius: 15px;
+            background: #00afa8;
+            padding: 5px 10px;
+        }
+
+        header {
+            background-color: #f5f5f5;
+            /*background-color: #000;*/
+            border-bottom-right-radius: 25px;
+            border-bottom-left-radius: 25px;
+
+        }
+        .total{
+            text-align: center;
+            font-size: 12px;
+
+        }
+        .total .col-xs-3{
+            padding-left: 0px;
+            padding-right: 0px;
+            color: rgb(130,130,130);
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .total-c{
+            margin-bottom: 10px;
+            min-height: 60px;
+            background: url("image/oilrec/t-fg.png")  no-repeat 100% 0%;
+        }
+        .total-text{
+            font-size: 16px;
+            font-weight: 700;
+            color: #00afa8;
+            margin: 5px;
+            word-wrap:break-word;
+        }
+        .total-unit{
+            color: #696969;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .detail{
+            padding: 10px 10px 0px;
+        }
+        .detail .detail-t{
+            background: url("image/oilrec/jl1.png") no-repeat;
+            background-size: 100% 100%;
+            /*margin: 10px;*/
+            padding: 10px;
+            font-size: 12px;
+            color: #ffffff;
+            /*margin-bottom: 10px;*/
+        }
+        .detail .detail-t.detail-a{
+            background: url("image/oilrec/jl2.png") no-repeat;
+            background-size: 100% 100%;
+        }
+        .detail-d{
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .detail-c{
+            border: 1px solid #41ac7e;
+            margin-left: 1px;
+            margin-right: 1px;
+            background-color: #ffffff;
+            display: none;
+        }
+        .detail-c.detail-a{
+            display: block;
+        }
+        .detail-c .row{
+            margin-top: 10px;
+        }
+        .detail-c .row.detail-fg{
+            padding: 0px;
+            height: 1px;
+            background: url("image/oilrec/jlfg.png") no-repeat;
+            background-size: 100% 100%;
+            margin: 0px -5px;
+        }
+        .detail-c .row .col-xs-4{
+            padding: 0px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<header class="container-fluid">
+    <div class="row oil-nav">
+        <div class="col-xs-4"><span id="all" class="nav-bar">全部</span></div>
+        <div class="col-xs-4"><span id="six" class="nav-bar nav-active">近六个月</span></div>
+        <div class="col-xs-4"><span id="one" class="nav-bar">近一个月</span></div>
+    </div>
+    <div class="row"><img src="image/oilrec/nav_fg.png" width="100%"></div>
+    <div class="row total">
+        <div class="col-xs-3">百公里费用</div>
+        <div class="col-xs-3">百公里油耗</div>
+        <div class="col-xs-3">总支出</div>
+        <div class="col-xs-3">行驶距离</div>
+    </div>
+    <div class="row total">
+        <div class="col-xs-3 total-c">
+            <img src="image/oilrec/fy.png" width="24px" height="18px"><br/>
+            <span id="afee" class="total-text">52.3</span><span class="total-unit">元</span>
+        </div>
+        <div class="col-xs-3 total-c"><img src="image/oilrec/hy.png" width="24px" height="18px"><br/>
+            <span id="aoc" class="total-text">10.81</span><span class="total-unit">升</span></div>
+        <div class="col-xs-3 total-c"><img src="image/oilrec/je.png" width="24px" height="18px"><br/>
+            <span id="fee" class="total-text"> 125348</span><span class="total-unit">元</span></div>
+        <div class="col-xs-3"><img src="image/oilrec/jl.png" width="24px" height="18px"><br/>
+            <span id="tm" class="total-text">1524575</span><span class="total-unit">公里</span></div>
+    </div>
+</header>
+<section id="detail-list"></section>
+<!--
+<div class="detail">
+ <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">12</span>月</div>
+    <div class="detail-c container">
+        <div class="row">
+            <div class="col-xs-4">
+                11月07日
+            </div>
+            <div class="col-xs-4">
+                加油48.7升
+            </div>
+            <div class="col-xs-4">
+                费用500元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月15日
+            </div>
+            <div class="col-xs-4">
+                加油28.6升
+            </div>
+            <div class="col-xs-4">
+                费用300元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月24日
+            </div>
+            <div class="col-xs-4">
+                加油18.6升
+            </div>
+            <div class="col-xs-4">
+                费用200元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月29日
+            </div>
+            <div class="col-xs-4">
+                加油19.0升
+            </div>
+            <div class="col-xs-4">
+                费用200元
+            </div>
+        </div>
+    </div>
+</div>
+<div class="detail">
+    <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">11</span>月</div>
+    <div class="detail-c container">
+        <div class="row">
+            <div class="col-xs-4">
+                11月07日
+            </div>
+            <div class="col-xs-4">
+                加油48.7升
+            </div>
+            <div class="col-xs-4">
+                费用500元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月15日
+            </div>
+            <div class="col-xs-4">
+                加油28.6升
+            </div>
+            <div class="col-xs-4">
+                费用300元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月24日
+            </div>
+            <div class="col-xs-4">
+                加油18.6升
+            </div>
+            <div class="col-xs-4">
+                费用200元
+            </div>
+        </div>
+        <div class="row detail-fg"></div>
+        <div class="row">
+            <div class="col-xs-4">
+                11月29日
+            </div>
+            <div class="col-xs-4">
+                加油19.0升
+            </div>
+            <div class="col-xs-4">
+                费用200元
+            </div>
+        </div>
+    </div>
+</div>
+<div class="detail">
+    <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">10</span>月</div>
+    <div class="detail-c"></div>
+</div>
+<div class="detail">
+    <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">9</span>月</div>
+    <div class="detail-c"></div>
+</div>
+<div class="detail">
+    <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">8</span>月</div>
+    <div class="detail-c"></div>
+</div>
+<div class="detail">
+    <div class="detail-t"><img src="image/oilrec/jt_r.png" width="15px" height="15px">&nbsp;&nbsp;<span class="detail-d">2014</span>年<span class="detail-d">7</span>月</div>
+    <div class="detail-c"></div>
+</div>-->
+<br/>&nbsp;
+<br/>&nbsp;
+</body>
+</html>

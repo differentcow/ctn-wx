@@ -1,0 +1,31 @@
+{
+    "button": [
+        {
+            "type": "view",
+            "name": "爱车行程",
+            "url": "http://carbuddy.jd-app.com/cal.html",
+            "sub_button": [ ]
+        },
+        {
+            "type": "view",
+            "name": "加油日志",
+            "url": "http://carbuddy.jd-app.com/oilrec.html",
+            "sub_button": [ ]
+        },
+        {
+            "name": "随身记",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "记录保养",
+                    "url": "http://carbuddy.jd-app.com/nopage.html"
+                },
+                {
+                    "type": "view",
+                    "name": "记录洗车",
+                    "url": "http://carbuddy.jd-app.com/nopage.html"
+                }
+            ]
+        }
+    ]
+}

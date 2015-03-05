@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>爱车行程</title>
+    <link href="shared/bootstrap-min/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/journey.css" rel="stylesheet"/>
+    <script src="shared/js/zepto.min.js"></script>
+    <script src="js/journey.js"></script>
+
+    <!--<script>
+        $(function(){
+            $('div.content').css('min-height',document.documentElement.clientHeight*0.5);
+            $('div.bottom').css('min-height',document.documentElement.clientHeight*0.3);
+        })
+    </script>-->
+</head>
+<body>
+<header>
+    <div class="header">
+        <button type="button" class="btn left-btn"><span class="glyphicon glyphicon-chevron-left"></span></button>
+        <span class="mid-content"></span>
+        <button type="button" class="btn right-btn"><span class="glyphicon glyphicon-chevron-right"></span></button>
+    </div>
+</header>
+<div class="container-fluid">
+   <!-- <div class="row header">
+        <div class="col-xs-3 left-btn"></div>
+        <div class="col-xs-9 mid-content">2014年12月28日</div>
+        <div class="col-xs-1 pull-right right-btn"></div>
+    </div>-->
+
+    <div class="row top">
+        <div class="row" style="text-align:center; padding-top:5px">当 日 数 据</div>
+        <div class="row" style="margin-top:0.5em;margin-bottom:0.5em;">
+            <div class="col-xs-6" style="padding-left:15px;margin:0;">当 日 油 耗: <span id="toc">10.5L</span></div>
+            <div class="col-xs-6">当 日 里 程: <span id="tm">90km</span></div>
+        </div>
+        <div class="row" style="padding-left:15px;margin-bottom:0.5em;">平 均 油 耗: <span id="aoc">7.5L/km</span></div>
+    </div>
+    <section id="route"></section>
+</div>
+</body>
+</html>

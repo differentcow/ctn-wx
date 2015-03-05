@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>ctn.wx</groupId>
+    <artifactId>ctn-wx</artifactId>
+    <version>1.0</version>
+  </parent>
+  <artifactId>helper-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>helper-webapp Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+ <dependencies>
+	
+	<dependency>
+		<groupId>ctn.wx</groupId>
+		<artifactId>ctn-core</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<contextReloadable>true</contextReloadable>
+					<uriEncoding>UTF-8</uriEncoding>
+					<path>/</path>
+					<port>8080</port>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

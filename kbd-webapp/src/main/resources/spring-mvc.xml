@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd">
+	<bean id="props"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:cbd.properties</value>
+				<value>file:///${user.home}/.cbd/cbd.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+	</bean>
+	<context:component-scan base-package="com.ctn" />
+	<mvc:annotation-driven
+		content-negotiation-manager="contentManager" />
+	<bean id="contentManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="favorPathExtension" value="true" />
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="text/html" />
+		<property name="useJaf" value="false" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="html" value="text/html" />
+				<entry key="xml" value="application/xml" />
+			</map>
+		</property>
+	</bean>
+<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">  
+	<property name="order" value="1" />  
+        <property name="contentNegotiationManager">  
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">  
+                <constructor-arg>  
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">  
+                        <constructor-arg>  
+                            <map>  
+                                <entry key="json" value="application/json"/>  
+                                <entry key="xml" value="application/xml"/>  
+                            </map>  
+                        </constructor-arg>  
+                    </bean>  
+                </constructor-arg>  
+            </bean>  
+        </property>  
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="viewClass"
+						value="org.springframework.web.servlet.view.JstlView" />
+					<property name="prefix" value="/WEB-INF/jsp/" />
+					<property name="suffix" value=".jsp"></property>
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<property name="marshaller">
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
+					</property>
+				</bean>
+				<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" >
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<task:annotation-driven />
+
+
+
+
+	<bean id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation">
+			<value>classpath:ehcache.xml</value>
+		</property>
+	</bean>
+
+
+
+
+
+	<!-- 多文上传，限制1G文件 -->
+	<!-- <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		<property name="maxUploadSize" value="1073741824" /> </bean> -->
+
+	<!-- spring mvc上下文使用,可在@Controller注解类上使用注解@Value获取system.properties属性值,如: 
+		com.newsoft.portal.core.controller.PortalCoreController类的renderPage属性 @Value("${pagerender:1}") 
+		private String renderPage = "1"; ${}中冒号后面表示默认值 -->
+
+
+	<!-- 定义本地化变更拦截器 -->
+	<!-- <mvc:interceptors> -->
+	<!-- Changes the locale when a 'locale' request parameter is sent; e.g. 
+		/?locale=de -->
+	<!-- <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" 
+		/> </mvc:interceptors> -->
+	<!-- <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"></bean> 
+		<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+		<property name="basename"> <value>i18n/messages</value> </property> </bean> -->
+	<!-- <bean id="mVCPortletActionHandlerMap" class="com.newsoft.portal.util.MVCPortletActionHandlerMap" 
+		lazy-init="false"></bean> -->
+</beans>

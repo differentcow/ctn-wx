@@ -1,0 +1,174 @@
+* {
+    font-size: 16px;
+}
+
+.top {
+    background: url("../image/journey/bg1.png") no-repeat;
+    background-size: 100% 100%;
+    color: white;
+    min-height: 100px;
+    /*            font-weight: bold;*/
+}
+
+.top .row {
+    margin: 0;
+}
+
+.content {
+    background: url("../image/journey/bg2.png") repeat-y 0px 0px;
+    background-size: 100% auto;
+    min-height: 200px;
+}
+
+.bottom {
+    background: url("../image/journey/bg3.png") no-repeat 0px 0px;
+    background-size: 100% 100%;
+    min-height: 240px;
+}
+
+.detail {
+    height: 100px;
+    margin: 0 15px;
+    letter-spacing: 3px;
+}
+
+.detail .left {
+    vertical-align: middle;
+    height: 100%;
+    line-height: 100px;
+    /*text-align: center;*/
+    padding: 0px;
+}
+
+.detail .center {
+    padding-top: 25px;
+    padding-left: 0;
+    height: 100%;
+    background: url("../image/journey/dot.png") repeat-y 25px;
+}
+
+.detail .center .text {
+    display: block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background: #25BAAA;
+    border-radius: 15px;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    padding: 0px;
+    text-align: center;
+    vertical-align: text-top;
+}
+
+.detail .right {
+    padding-right: 0px;
+
+}
+
+.detail .right .text {
+    height: 100px;
+    /*line-height: 100px;*/
+    background: white;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: gray;
+    padding-top: 40px;
+    padding-left: 10px;
+    /*text-align: center;*/
+    vertical-align: middle;
+}
+
+.detail-a {
+    height: 50px;
+    margin: 0 15px;
+    letter-spacing: 3px;
+}
+
+.detail-a .left {
+    vertical-align: middle;
+    height: 100%;
+    line-height: 50px;
+    /*text-align: center;*/
+    padding: 0px;
+}
+
+.detail-a .center {
+    padding-top: 25px;
+    padding-left: 0;
+    height: 100%;
+    background: url("../image/journey/dot.png") repeat-y 25px;
+}
+
+.detail-a .right {
+    font-size: 13px;
+    color: darkgray;
+    padding-left: 25px;
+}
+
+.detail-b {
+    height: 15px;
+    margin: 0 15px;
+    letter-spacing: 3px;
+}
+
+.detail-b .center {
+    padding-left: 0;
+    height: 100%;
+    background: url("../image/journey/dot.png") repeat-y 25px;
+}
+
+.detail-b.detail-top .center {
+    padding-left: 0;
+    height: 100%;
+    background: none;
+    /*background: url("../image/journey/dot.png") repeat-y 25px;*/
+}
+
+.detail.detail-top .center {
+    padding-top: 0px;
+    margin-top: 25px;
+    padding-left: 0;
+    height: auto;
+    padding-bottom: 25px;
+    background: url("../image/journey/dot.png") repeat-y 25px;
+}
+
+.bottom .detail .center {
+    height: auto;
+}
+.bottom .detail-a .center {
+    padding-top: 25px;
+    padding-left: 0;
+    height: 100%;
+    background: transparent;
+}
+.header {
+    background-color: #5b5c5e;
+    height: 3rem;
+    text-align: center;
+}
+
+.header .mid-content {
+    line-height: 3rem;
+    color: #ffffff;
+}
+
+.header .left-btn{
+    padding-left: 15px;
+    color: #ffffff;
+    background-color: transparent;
+    position: absolute;
+    left: 0px;
+}
+.header .right-btn {
+    padding-right: 15px;
+    color: #ffffff;
+    background-color: transparent;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+
+}
