@@ -1,14 +1,12 @@
 package com.ctn.util;
 
-import java.io.OutputStream;
+import com.ctn.entity.Message;
+import com.ctn.entity.MessageArticle;
+import org.apache.commons.lang.StringUtils;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.ctn.entity.Message;
-import com.ctn.entity.MessageArticle;
+import java.io.OutputStream;
 //import java.lang.reflect.Field;
 //import java.lang.reflect.Method;
 
@@ -213,7 +211,7 @@ public class XMLStreamHelper {
 				}
 			    if (msg.getCreateTime() != null) {
 			    	xmlWriter.writeStartElement("CreateTime");  
-				    xmlWriter.writeCharacters(String.valueOf(msg.getCreateTime().getTime()));  
+				    xmlWriter.writeCharacters(String.valueOf(msg.getCreateTime()));
 				    xmlWriter.writeEndElement();
 				}
 			    if (msg.getMsgType()!=null) {

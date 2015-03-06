@@ -1,38 +1,31 @@
 package com.ctn.web.controller;
 
-import java.util.TreeSet;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.math.RandomUtils;
-import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ctn.cache.AccessTokenCache;
 import com.ctn.constant.Constant;
 import com.ctn.constant.WebHttpConnection;
-import com.ctn.entity.AccessToken;
-import com.ctn.entity.Menu;
-import com.ctn.entity.Message;
-import com.ctn.entity.RestResult;
-import com.ctn.entity.WxResult;
+import com.ctn.core.bean.HandlerBean;
+import com.ctn.core.bean.HandlerMapping;
+import com.ctn.core.bean.manager.HandlerBeanManager;
+import com.ctn.entity.*;
 import com.ctn.schedule.GetAccessTokenTask;
 import com.ctn.service.MessageService;
 import com.ctn.util.EncoderHandler;
 import com.ctn.util.JsonMapper;
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.TreeSet;
+import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/base")
+@RequestMapping("/core")
 public class BaseController {
 	private static Logger logger = Logger.getLogger(BaseController.class.getName());
 	
@@ -44,29 +37,35 @@ public class BaseController {
 	private String token;
 	@Autowired
 	private MessageService messageService;
-public static void main(String[] args) {
-	System.out.println(RandomUtils.nextLong());
-}
-	@RequestMapping(value = "/msg", method = RequestMethod.GET)
+    @Autowired
+    private HandlerBeanManager handlerBeanManager;
+    @Value("${wechat.developer.account}")
+    private String developer;
+    @Value("${server.address}")
+    private String serverUrl;
+
+
+	@RequestMapping(value = "/chat", method = RequestMethod.GET)
 	public Object checkToken(HttpServletRequest req,
-			@RequestParam("signature") String signature,
-			@RequestParam("timestamp") String timestamp,
-			@RequestParam("nonce") String nonce,
-			@RequestParam("echostr") String echostr) {
+                            @RequestParam(value = "signature",required = false) String signature,
+                            @RequestParam(value = "timestamp",required = false) String timestamp,
+                            @RequestParam(value = "nonce",required = false) String nonce,
+                            @RequestParam(value = "echostr",required = false) String echostr) {
 		signature = StringUtils.isEmpty(signature) ? "0" : signature;
 		token = StringUtils.isEmpty(token) ? "1" : token;
 		nonce = StringUtils.isEmpty(nonce) ? "1" : nonce;
 		timestamp = StringUtils.isEmpty(timestamp) ? "3" : timestamp;
+
+        boolean flag = verifyMsg(timestamp, nonce, signature);
 		/**
 		 * 加密后的密文验证
 		 */
-		if (verifyMsg(timestamp, nonce, signature))
+		if (flag)
 			return echostr;
 		/** Success,返回微信提供的返回信号 */
 		else
 			return false;
 		/** Failure, 什么都不做 */
-
 	}
 
 	private boolean verifyMsg(String timestamp, String nonce, String signature) {
@@ -87,29 +86,41 @@ public static void main(String[] args) {
 		return signature.equals(signatureSha1);
 	}
 
-	@RequestMapping("/callback/{cmd}")
-	public Object callBack(HttpServletRequest req, @PathVariable String cmd) {
 
-		return "OK";
-	}
 
-	@RequestMapping(value = "/msg", method = RequestMethod.POST)
-	public Object msg(HttpServletRequest req,HttpServletResponse resp,
-			@RequestParam(value="signature",required=false) String signature,
-			@RequestParam(value="timestamp",required=false) String timestamp,
-			@RequestParam(value="nonce",required=false) String nonce,
-			@RequestParam(value="echostr",required=false) String echostr, @RequestBody Message msg) {
+	@RequestMapping(value = "/chat", method = RequestMethod.POST)
+	public Object msg(HttpServletRequest request,HttpServletResponse response,
+                    @RequestParam(value="signature",required=false) String signature,
+                    @RequestParam(value="timestamp",required=false) String timestamp,
+                    @RequestParam(value="nonce",required=false) String nonce,
+                    @RequestParam(value="echostr",required=false) String echostr,
+                    @RequestBody Message msg) {
+
 		logger.info("timestamp:"+timestamp+"\nnonce:"+nonce+"\nsignature:"+signature);
-		if (verifyMsg(timestamp, nonce, signature)) {
-			try {
-				logger.info("in-->"+msg.toString());
-				Message response = messageService.processMsg(msg);
-				logger.info("out-->"+response.toString());
-//				XMLStreamHelper.turnXML(response, resp.getOutputStream());
-				return response;
-			} catch (Exception e) {
-			}
-		}
+        boolean flag = verifyMsg(timestamp, nonce, signature);
+//        boolean flag = true;
+        /**
+         * 通过验证后
+         */
+        if (flag){
+            try {
+                request.setAttribute("developer",developer);
+                request.setAttribute("serverUrl",serverUrl);
+                HandlerMapping mapping = handlerBeanManager.getHandlerMapping();
+                HandlerBean bean = mapping.getHandlerBean(msg.getEvent(),msg.getMsgType());
+                Method method = bean.getClazz().getMethod(bean.getMethodName(), HttpServletRequest.class,
+                        HttpServletResponse.class, Message.class);
+                return method.invoke(bean.getValue(),request,response,msg);
+
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
 		return null;
 	}
 
@@ -156,8 +167,7 @@ public static void main(String[] args) {
 			AccessToken at = getAccessTokenTask.requestToken();
 			return at;
 		} else {
-			return accessTokenCache
-					.getAccessToken(Constant.CACHE_ACCESS_TOKEN_KEY);
+			return accessTokenCache.getAccessToken(Constant.CACHE_ACCESS_TOKEN_KEY);
 		}
 	}
 }

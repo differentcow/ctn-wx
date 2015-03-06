@@ -97,7 +97,7 @@
 		<profile>
 			<id>ts</id>
 			<properties>
-				<deploy.url>http://220.168.86.158:8188/manager/text</deploy.url>
+				<deploy.url>http://192.168.1.53:8888/manager/text</deploy.url>
 			</properties>
 		</profile>
 		<profile>
@@ -143,6 +143,7 @@
 				<configuration>
 					<url>${deploy.url}</url>
 					<server>test</server>
+                    <path>/wx</path>
 				</configuration>
 			</plugin>
 		</plugins>

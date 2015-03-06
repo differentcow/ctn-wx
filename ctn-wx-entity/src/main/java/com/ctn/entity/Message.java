@@ -1,13 +1,11 @@
 package com.ctn.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import com.ctn.entity.type.EventType;
+import com.ctn.entity.type.MsgType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.ctn.entity.type.EventType;
-import com.ctn.entity.type.MsgType;
+import java.io.Serializable;
 
 /**
  * 微信消息通讯载体
@@ -26,7 +24,7 @@ public class Message implements Serializable{
 	private String toUserName;
 	
 	private String fromUserName;
-	private Date createTime;
+	private Long createTime;
 	private MsgType msgType;
 	private String content;
 	private String msgId;
@@ -78,10 +76,10 @@ public class Message implements Serializable{
 		this.fromUserName = fromUserName;
 	}
 	@XmlElement(name="CreateTime")
-	public Date getCreateTime() {
+	public Long getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(Long createTime) {
 		this.createTime = createTime;
 	}
 	@XmlElement(name="Content")

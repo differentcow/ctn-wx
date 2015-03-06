@@ -3,19 +3,18 @@
  */
 package com.ctn.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.ctn.entity.Message;
 import com.ctn.entity.MessageArticle;
 import com.ctn.entity.MessageArticles;
 import com.ctn.entity.type.MsgType;
 import com.ctn.service.MessageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Zale
@@ -52,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
 	private void createSubscribeMsg(Message msg, Message response, Date now) {
 		response.setToUserName(msg.getFromUserName());;
 		response.setFromUserName(developer);
-		response.setCreateTime(now);
+		response.setCreateTime(now.getTime());
 		response.setMsgType(MsgType.news);
 		response.setArticleCount(3);
 		MessageArticles articles = new MessageArticles();
