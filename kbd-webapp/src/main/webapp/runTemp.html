@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>实时温度</title>
+
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript">
+            var chart;
+            $(document).ready(function() {
+
+                $('#reset').click(function(){
+                    $.when($.getJSON("/wx/service/chart/reset.json")).done(function(data){
+                        if(data.state == 1){
+                            window.location.href = "/wx/runTemp.html";
+                        }
+                    }).fail(function(error){
+                        alert(error);
+                    });
+
+                });
+
+                $('#start').click(function(){
+                    var val = $('#switch').val();
+                    if(val == 'N'){
+                        $('#switch').val('Y');
+                    }
+                    if($(this).attr('mark')=='N'){
+                        $(this).attr('mark','Y');
+                        $(this).text('停止录入数据');
+                        if(val == 'Y'){
+                            $('#store').attr('disabled','disabled');
+                        }
+                    }else{
+                        $(this).attr('mark','N');
+                        $(this).text('录入实时数据');
+                        if(val == 'Y'){
+                            $('#store').removeAttr('disabled');
+                        }
+                    }
+                });
+
+                $('#store').click(function(){
+                    $.when($.getJSON("/wx/service/chart/datas.json")).done(function(data){
+                        if(chart.series[1] == null){
+                            chart.addSeries(1,true);
+                        }
+                        var series = chart.series[1];
+                        var title = series.name;
+                        series.update({name:'温度存储数据',type:'column'},true);
+                        series.setData(data.ary);
+                    }).fail(function(error){
+                        alert(error);
+                    });
+                });
+
+
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                $('#container').highcharts({
+                    chart: {
+                        type: 'spline',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10,
+                        events: {
+                            load: function() {
+
+                                // set up the updating of the chart each second
+                                chart = this;
+                                var series = this.series[0];
+                                setInterval(function() {
+                                    var val = $('#start').attr('mark');
+                                    $.when($.getJSON("/wx/service/chart/data.json?mark="+val)).done(function(data){
+                                        if('Y' == data.state){
+                                            series.addPoint([data.x,data.y], true, false);
+                                        }
+                                    }).fail(function(error){
+                                        alert(error);
+                                    });
+/*
+                                    var x = (new Date()).getTime(), // current time
+                                            y = Math.random();
+                                    series.addPoint([x, y], true, false);*/
+                                }, 1000);
+                            }
+                        }
+                    },
+                    title: {
+                        text: '温度统计'
+                    },
+                    credits :{
+                        enabled:false
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature(°C)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                                    Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    legend: {
+                        enabled: true
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'T1温度实时数据',
+                        data: (function() {
+                            // generate an array of random data
+                            var data = [];
+                            return data;
+                        })()
+                    }]
+                });
+            });
+    </script>
+</head>
+<body>
+<script src="js/highcharts.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+<div>
+    <button id="start" mark="N">录入实时数据</button>
+    <button id="store" disabled="disabled">录入存储数据</button>
+    <button id="reset" mark="N">重置</button>
+    <input type="hidden" value="N" id="switch"/>
+</div>
+
+</body>
+</html>
