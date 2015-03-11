@@ -4,9 +4,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>实时温度</title>
 
-    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
             var chart;
+            function storeSpline(mark,data,series){
+                setTimeout(function(){
+                    var x = data[mark].x;
+                    var y = data[mark].y;
+                    series.addPoint([x,y], true, false);
+                    mark++;
+                    if(data.length > mark){
+                        storeSpline(mark,data,series);
+                    }
+                },500);
+            }
             $(document).ready(function() {
 
                 $('#reset').click(function(){
@@ -15,7 +26,7 @@
                             window.location.href = "/wx/runTemp.html";
                         }
                     }).fail(function(error){
-                        alert(error);
+                        console.log(error);
                     });
 
                 });
@@ -46,11 +57,12 @@
                             chart.addSeries(1,true);
                         }
                         var series = chart.series[1];
-                        var title = series.name;
-                        series.update({name:'温度存储数据',type:'column'},true);
-                        series.setData(data.ary);
+                        var mark = 0;
+                        storeSpline(mark,data.ary,series);
+//                        series.setData(data.ary);
+                        //series.update({name:'T1温度存储数据'},true);
                     }).fail(function(error){
-                        alert(error);
+                        console.log(error);
                     });
                 });
 
@@ -63,7 +75,7 @@
 
                 $('#container').highcharts({
                     chart: {
-                        type: 'spline',
+                        type: 'line',
                         animation: Highcharts.svg, // don't animate in old IE
                         marginRight: 10,
                         events: {
@@ -90,7 +102,7 @@
                         }
                     },
                     title: {
-                        text: '温度统计'
+                        text: '温度统计(°C)'
                     },
                     credits :{
                         enabled:false
@@ -103,6 +115,11 @@
                         title: {
                             text: 'Temperature(°C)'
                         },
+                        labels: {
+                            formatter: function() {
+                                return this.value +'°C';
+                            }
+                        },
                         plotLines: [{
                             value: 0,
                             width: 1,
@@ -110,11 +127,8 @@
                         }]
                     },
                     tooltip: {
-                        formatter: function() {
-                            return '<b>'+ this.series.name +'</b><br/>'+
-                                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
-                                    Highcharts.numberFormat(this.y, 2);
-                        }
+                        crosshairs: true,
+                        shared: true
                     },
                     legend: {
                         enabled: true
@@ -129,7 +143,7 @@
                             var data = [];
                             return data;
                         })()
-                    }]
+                    },{name:'T1温度存储数据',data:[]}]
                 });
             });
     </script>

@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <meta name="description" content="">
+        <!-- <link rel="shortcut icon" href="#" type="image/png"> -->
+        <title>温度</title>
+        <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	</head>
+	<body>
+    <div>
+        <div id="main" style="height:400px"></div>
+        <!--<div id="main2" style="height:400px"></div>-->
+        <div>
+            <button id="start" mark="N">录入实时数据</button>
+            <button id="store" disabled="disabled">录入存储数据</button>
+            <button id="reset" mark="N">重置</button>
+            <input type="hidden" value="N" id="switch"/>
+        </div>
+        <script src="js/echarts-s.js"></script>
+        <script type="text/javascript">
+            var myChart;
+            var op1;
+//            var myChart2;
+            // Step:3 conifg ECharts's path, link to echarts.js from current page.
+            // Step:3 为模块加载器配置echarts的路径，从当前页面链接到echarts.js，定义所需图表路径
+            Date.prototype.Format = function(fmt)
+            { //author: meizz
+                var o = {
+                    "M+" : this.getMonth()+1,                 //月份
+                    "d+" : this.getDate(),                    //日
+                    "h+" : this.getHours(),                   //小时
+                    "m+" : this.getMinutes(),                 //分
+                    "s+" : this.getSeconds(),                 //秒
+                    "q+" : Math.floor((this.getMonth()+3)/3), //季度
+                    "S"  : this.getMilliseconds()             //毫秒
+                };
+                if(/(y+)/.test(fmt))
+                    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+                for(var k in o)
+                    if(new RegExp("("+ k +")").test(fmt))
+                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+                return fmt;
+            }
+            require.config({
+                paths: {
+                    echarts: '../wx/js'
+                }
+            });
+
+            // Step:4 require echarts and use it in the callback.
+            // Step:4 动态加载echarts然后在回调函数中开始使用，注意保持按需加载结构定义图表路径
+            require(
+                    [
+                        'echarts',
+                        'echarts/chart/bar',
+                        'echarts/chart/line',
+                        'echarts/chart/config'
+
+                    ],
+                    function (ec) {
+
+                         op1 = {
+                            title : {
+                                text: '温度统计(°C)'
+//                                subtext: 'T1温度计实时数据与存储数据'
+                            },
+                            tooltip : {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data:['T1温度实时数据','T1温度存储数据']
+                            },
+                            toolbox: {
+                                show : true,
+                                feature : {
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            calculable : true,
+                            xAxis : [
+                                {
+                                    type : 'category',
+                                    boundaryGap : true,
+                                    data : (function (){
+                                        var now = new Date();
+                                        var res = [];
+                                        var len = 10;
+                                        while (len--) {
+//                                            res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
+                                            res.unshift(now.Format('hh:mm:ss'));
+                                            now = new Date(now - 2000);
+                                        }
+                                        return res;
+                                    })(),
+                                    splitArea : {show:false},
+                                    splitLine : {show:false}
+                                }
+                            ],
+                            yAxis : [
+                                {
+                                    type : 'value',
+                                    scale: true,
+                                    splitArea : {show:false},
+                                    splitLine : {show:false},
+                                    name : '温度(°C)',
+                                    boundaryGap: [0.2, 0.2],
+                                    axisLabel:{
+                                        formatter : function(val){
+                                            return val + '°C';
+                                        }
+                                    }
+                                }
+                            ],
+                            series : [
+                                {
+                                    name:'T1温度存储数据',
+                                    type:'line',
+                                    data:[0]
+                                },
+                                {
+                                    name:'T1温度实时数据',
+                                    type:'line',
+                                    data:[0]
+                                }
+                            ]
+                        };
+
+                        //--- 折柱 ---
+                        myChart = ec.init(document.getElementById('main'));
+                        myChart.setOption(op1);
+                        /*myChart.on('legendSelected', function (param){
+                            var selected = param.selected;
+                            alert(selected);
+                        });*/
+
+//                        myChart2 = ec.init(document.getElementById('main2'));
+//                        myChart2.setOption(op2);
+
+//                        myChart.connect([myChart2]);
+//                        myChart2.connect([myChart]);
+                    }
+            );
+
+            function getData(cnt){
+                $.when($.getJSON("/wx/service/echart/data.json?mark="+$('#start').attr('mark'))).done(function(data){
+                    if(data.state == 'Y'){
+                        if(cnt == 0){
+                            var dd = op1.series[1].data;
+                            dd.splice(0,1,data.val);
+                            myChart.setOption(op1);
+//                            myChart.getSeries().data.push(data.val);
+                        }else if(cnt > 8){
+                            myChart.addData(1,data.val,false,true,data.times);
+                        }else{
+                            myChart.addData(1,data.val,false,true);
+                        }
+                        cnt++;
+                    }
+                    if($('#start').attr('mark')=='Y'){
+                        setTimeout(function(){getData(cnt);},1000);
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
+            }
+
+            function storeData(data,count){
+                if(count == 0){
+                    var dd = op1.series[0].data;
+                    dd.splice(0,1,data[count].val);
+                    myChart.setOption(op1);
+                }else{
+                    myChart.addData(0,data[count].val,false,true);
+                }
+                count++;
+                if(data.length > count ){
+                    setTimeout(function(){storeData(data,count);},500);
+                }
+            }
+
+            $(document).ready(function(){
+                $('#reset').click(function(){
+                    $.when($.getJSON("/wx/service/echart/reset.json")).done(function(data){
+                        if(data.state == 1){
+                            window.location.href = "/wx/echartTemp.html";
+                        }
+                    }).fail(function(error){
+                        console.log(error);
+                    });
+
+                });
+
+                $('#start').click(function(){
+                    var val = $('#switch').val();
+                    if(val == 'N'){
+                        $('#switch').val('Y');
+                    }
+                    if($(this).attr('mark')=='N'){
+                        $(this).attr('mark','Y');
+                        $(this).text('停止录入数据');
+                        if(val == 'Y'){
+                            $('#store').attr('disabled','disabled');
+                        }
+//                        myChart.chart.island.option.series.push({name:'T1温度实时数据',type:'bar',data:[0]});
+                        getData(0);
+                    }else{
+                        $(this).attr('mark','N');
+                        $(this).text('录入实时数据');
+                        if(val == 'Y'){
+                            $('#store').removeAttr('disabled');
+                        }
+                    }
+                });
+
+                $('#store').click(function(){
+                    $.when($.getJSON("/wx/service/echart/datas.json")).done(function(data){
+                        var count = 0;
+                        storeData(data.ary,count);
+                    }).fail(function(error){
+                        console.log(error);
+                    });
+                });
+            });
+        </script>
+    </div>
+	</body>
+</html>

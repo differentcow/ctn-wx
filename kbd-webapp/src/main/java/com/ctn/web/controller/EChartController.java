@@ -7,18 +7,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Barry on 2015/3/5.
  */
 
 @RestController
-@RequestMapping("/chart")
-public class ChartController {
+@RequestMapping("/echart")
+public class EChartController {
 
     private List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 
@@ -29,8 +27,8 @@ public class ChartController {
         String mark = request.getParameter("mark");
         if("Y".equals(mark)){
             map.put("state","Y");
-            map.put("x",System.currentTimeMillis());
-            map.put("y",getRandomFloat());
+            map.put("times",new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            map.put("val",getRandomFloat());
 
            /* Map<String,Object> map2 = new HashMap<String,Object>();
             map2.put("x",System.currentTimeMillis());
