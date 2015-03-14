@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Packet id="sleep_time">
+    <segment name="cmd" len="1"></segment>
+    <segment name="type" len="1"></segment>
+    <segment name="data_len" len="1"></segment>
+    <segment name="data">
+        <attr name="sleep" len="4"></attr>
+        <validate>
+            <express>${v10(data_len.value) eq data.sleep.len }</express>
+        </validate>
+    </segment>
+</Packet>

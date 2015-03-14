@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Frame id="up2pc">
+    <segment name="head" len="3"></segment>
+    <segment name="cmd_id" len="1">
+        <validate>
+            <express>
+                ${f:contain(this.value,(f:v16(00,02,04)))}
+            </express>
+        </validate>
+    </segment>
+    <segment name="equip_id" len="1">
+        <validate>
+            <express>
+                ${f:contain(this.value,(f:v16(05,02,04)))}
+            </express>
+        </validate>
+    </segment>
+    <segment name="data_total" len="1"></segment>
+    <segment name="source_addr_len" len="1"></segment>
+    <segment name="source_addr">
+        <validate module="len">
+            <express>
+                ${f:contain(this.len,(2,4,8))}
+            </express>
+        </validate>
+    </segment>
+    <segment name="data">
+        <packets>
+            <packet ref="sleep_time">
+                <filter test="cmd eq v16(31)"></filter>
+            </packet>
+        </packets>
+    </segment>
+    <segment name="verification" len="1"></segment>
+    <check>
+        <step>
+            <express>${up2pc[0-3] eq f:v16(100201)}</express>
+        </step>
+        <step>
+            <express>
+                ${up2pc[5] + 6 eq f:v10(up2pc[up2pc[5]+7])}
+            </express>
+        </step>
+    </check>
+</Frame>
