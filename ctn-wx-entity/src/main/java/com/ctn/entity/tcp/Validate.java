@@ -1,57 +1,29 @@
 package com.ctn.entity.tcp;
 
+import java.util.List;
+
 /**
  * Created by barry on 2015/3/13.
  */
 public class Validate {
 
-    private String type;
+    private List<Express> express;
 
-    private String module;
+    private String bool;
 
-    private String value;
-
-    private String[] values;
-
-    private int checkType;
-
-    public String[] getValues() {
-        return values;
+    public String getBool() {
+        return bool;
     }
 
-    public void setValues(String[] values) {
-        this.values = values;
+    public void setBool(String bool) {
+        this.bool = bool;
     }
 
-    public int getCheckType() {
-        return checkType;
+    public List<Express> getExpress() {
+        return express;
     }
 
-    public void setCheckType(int checkType) {
-        this.checkType = checkType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
+    public void setExpress(List<Express> express) {
+        this.express = express;
     }
 }
