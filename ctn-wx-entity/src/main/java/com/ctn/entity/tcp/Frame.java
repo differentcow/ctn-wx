@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by barry on 2015/3/13.
  */
-public class Frame {
+public class Frame extends FrameData{
 
     private List<Segment> segment;
 

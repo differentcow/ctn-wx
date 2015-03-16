@@ -1,5 +1,6 @@
 package com.ctn.nioserver;
 
+import com.ctn.nioserver.decode.TCPFrameDecoder;
 import com.ctn.nioserver.handler.TemperatureHandler;
 import com.ctn.tcp.FrameManager;
 import io.netty.bootstrap.ServerBootstrap;
@@ -31,6 +32,7 @@ public class ReceiveServer {
                   .childHandler(new ChannelInitializer<SocketChannel>() {
                       @Override
                       protected void initChannel(SocketChannel socketChannel) throws Exception {
+                          socketChannel.pipeline().addLast(new TCPFrameDecoder(manager));
                         socketChannel.pipeline().addLast(new TemperatureHandler(manager));
                       }
                   })

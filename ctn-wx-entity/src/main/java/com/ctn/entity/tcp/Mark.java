@@ -1,8 +1,8 @@
 package com.ctn.entity.tcp;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by HLJ on 2015/3/14.
@@ -134,7 +134,7 @@ public class Mark {
         map.put(sy,map.get(sy));
     }
 
-    public static List<Param> decode(String ex){
+    /*public static List<Param> decode(String ex){
         char[] esx = ex.toCharArray();
         List<Param> ps = new ArrayList<Param>();
         Map<String,List<Integer>> map = new HashMap<String,List<Integer>>();
@@ -162,12 +162,12 @@ public class Mark {
         }
 
 
-        /*for (Character c : bs){
+        *//*for (Character c : bs){
             List<Integer> l =  map.get(String.valueOf(c));
             if(l != null && !l.isEmpty()){
 
             }
-        }*/
+        }*//*
 
 
         int a1 = ex.indexOf("*");
@@ -178,7 +178,7 @@ public class Mark {
         int a3 = ex.indexOf("%");
 
         return null;
-    }
+    }*/
 
 
     public static void main(String[] args){

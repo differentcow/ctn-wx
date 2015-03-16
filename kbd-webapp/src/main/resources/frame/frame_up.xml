@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Frame id="up2pc">
+    <head type="16" value="100201"></head>
     <segment name="head" len="3"></segment>
     <segment name="cmd_id" len="1">
-        <validate>
-            <express>
-                ${f:contain(this.value,(f:v16(00,02,04)))}
-            </express>
+        <validate bool="or">
+            <express type="10" value="this[value] eq 0"/>
+            <express type="10" value="this[value] eq 2"/>
+            <express type="10" value="this[value] eq 4"/>
         </validate>
     </segment>
     <segment name="equip_id" len="1">
-        <validate>
-            <express>
-                ${f:contain(this.value,(f:v16(05,02,04)))}
-            </express>
+        <validate bool="or">
+            <express type="10" value="this[value] eq 5"/>
+            <express type="10" value="this[value] eq 4"/>
+            <express type="10" value="this[value] eq 2"/>
         </validate>
     </segment>
     <segment name="data_total" len="1"></segment>
-    <segment name="source_addr_len" len="1"></segment>
-    <segment name="source_addr">
-        <validate module="len">
-            <express>
-                ${f:contain(this.len,(2,4,8))}
-            </express>
+    <segment name="source_addr_len" len="1">
+        <validate bool="or">
+            <express type="10" value="this[value] eq 2"/>
+            <express type="10" value="this[value] eq 4"/>
+            <express type="10" value="this[value] eq 8"/>
         </validate>
     </segment>
-    <segment name="data">
-        <packets>
-            <packet ref="sleep_time">
-                <filter test="cmd eq v16(31)"></filter>
-            </packet>
-        </packets>
+    <segment name="source_addr" expressLen="parent[6]"></segment>
+    <segment name="data" expressLen="parent[5] - parent[6] - 1">
+        <packet ref="sleep_time">
+            <filter test="this[0] eq v10(31)"></filter>
+        </packet>
     </segment>
     <segment name="verification" len="1"></segment>
     <check>
-        <step>
-            <express>${up2pc[0-3] eq f:v16(100201)}</express>
-        </step>
-        <step>
-            <express>
-                ${up2pc[5] + 6 eq f:v10(up2pc[up2pc[5]+7])}
-            </express>
-        </step>
+        <validate bool="and">
+            <express type="10" value="this[5] + 6 eq this[this[5]+6]"/>
+        </validate>
     </check>
 </Frame>

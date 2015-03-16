@@ -11,11 +11,25 @@ public class Express {
 
     private String value;
 
+    private String type;
+
+    private Integer start;
+
     private String operate;
 
     private String lefExpress;
 
     private String rightExpress;
+
+    private Integer len;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     private List<String> leftList;
 
@@ -23,7 +37,23 @@ public class Express {
 
     private List<String> expressList;
 
+    public Integer getStart() {
+        return start;
+    }
+
+    public void setStart(Integer start) {
+        this.start = start;
+    }
+
     private Map<String,Express> mapEx;
+
+    public Integer getLen() {
+        return len;
+    }
+
+    public void setLen(Integer len) {
+        this.len = len;
+    }
 
     public List<String> getLeftList() {
         return leftList;

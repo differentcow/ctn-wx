@@ -20,7 +20,17 @@ public class TCPFrameDecoder extends ByteToMessageDecoder{
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> objects) throws Exception {
-        byte[] binary = byteBuf.array();
+        if (byteBuf.readableBytes() < 12){
+            return;
+        }
+        int size = byteBuf.readableBytes();
+        byte[] bs = new byte[size];
+        while (byteBuf.isReadable()){
+            bs[byteBuf.readerIndex()] = byteBuf.readByte();
+        }
 
+        manager.convert(bs);
+
+//        objects.add()
     }
 }

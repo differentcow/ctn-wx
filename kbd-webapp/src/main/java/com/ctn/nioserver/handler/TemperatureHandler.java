@@ -1,7 +1,6 @@
 package com.ctn.nioserver.handler;
 
 import com.ctn.tcp.FrameManager;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -36,7 +35,7 @@ public class TemperatureHandler extends ChannelInboundHandlerAdapter{
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        byte[] binary = ((ByteBuf)msg).array();
+
 
     }
 

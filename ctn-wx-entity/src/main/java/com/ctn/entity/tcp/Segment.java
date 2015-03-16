@@ -3,11 +3,9 @@ package com.ctn.entity.tcp;
 /**
  * Created by barry on 2015/3/13.
  */
-public class Segment {
+public class Segment extends FrameData{
 
     private String name;
-
-    private String len;
 
     private Validate validate;
 
@@ -37,14 +35,6 @@ public class Segment {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLen() {
-        return len;
-    }
-
-    public void setLen(String len) {
-        this.len = len;
     }
 
     public Validate getValidate() {
