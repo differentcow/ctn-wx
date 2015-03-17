@@ -21,7 +21,7 @@
             $(document).ready(function() {
 
                 $('#reset').click(function(){
-                    $.when($.getJSON("/wx/service/chart/reset.json")).done(function(data){
+                    $.when($.getJSON("/wx/service/chart/reset.json?t="+Math.random())).done(function(data){
                         if(data.state == 1){
                             window.location.href = "/wx/runTemp.html";
                         }
@@ -52,7 +52,7 @@
                 });
 
                 $('#store').click(function(){
-                    $.when($.getJSON("/wx/service/chart/datas.json")).done(function(data){
+                    $.when($.getJSON("/wx/service/chart/datas.json?t="+Math.random())).done(function(data){
                         if(chart.series[1] == null){
                             chart.addSeries(1,true);
                         }
@@ -86,7 +86,7 @@
                                 var series = this.series[0];
                                 setInterval(function() {
                                     var val = $('#start').attr('mark');
-                                    $.when($.getJSON("/wx/service/chart/data.json?mark="+val)).done(function(data){
+                                    $.when($.getJSON("/wx/service/chart/data.json?mark="+val+"&t="+Math.random())).done(function(data){
                                         if('Y' == data.state){
                                             series.addPoint([data.x,data.y], true, false);
                                         }

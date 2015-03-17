@@ -92,7 +92,7 @@
 	</bean>
 
 
-
+    <import resource="classpath:applicationContext-mybatis.xml" />
 
 
 	<!-- 多文上传，限制1G文件 -->

@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <meta name="description" content="">
+        <!-- <link rel="shortcut icon" href="#" type="image/png"> -->
+        <title>温度</title>
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <!--end copy-->
+	</head>
+	<body>
+    <div class="container-fluid">
+        <div style="height: 150px;">&nbsp;</div>
+        <div class="table-responsive" style="padding-right: 100px;padding-left: 100px;">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>编号</td>
+                        <td align="center">颜色</td>
+                        <td>温度</td>
+                        <td>湿度</td>
+                        <td>光线</td>
+                        <td>电压</td>
+                        <td>操作</td>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach:list">
+                    <tr>
+                        <td data-bind="text:$data.temp_code"></td>
+                        <td align="center"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:20px;width:20px;border-radius:5px;">&nbsp;</div></td>
+                        <td data-bind="text:$data.celsius"></td>
+                        <td data-bind="text:$data.humidity"></td>
+                        <td data-bind="text:$data.light"></td>
+                        <td data-bind="text:$data.electric"></td>
+                        <td><a href="#" data-bind="click:function(){forwardDetail($data.id);}">详细</a></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="7"><a href="#">切换地图</a></td></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+	</body>
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery-1.11.1.min.js"></script>
+    <script src="../js/knockout-3.1.0.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function TemperatureModel() {
+            var me = this;
+            this.list = ko.observableArray([]);
+            this.init = function(){
+               me.getList();
+            };
+            this.forwardDetail = function(id){
+                window.location.href="temp.html?id="+id;
+            };
+            this.getList = function(){
+                $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
+                    me.list([]);
+                    if(data.state == 1){
+                        me.list(data.array);
+                    }
+                    setTimeout(function(){
+                        me.getList();
+                    },5000);
+                }).fail(function(error){
+                    console.log(error);
+                });
+            };
+        };
+        var model = new TemperatureModel();
+        model.init();
+        ko.applyBindings(model);
+    </script>
+</html>

@@ -5,7 +5,6 @@ import com.ctn.thread.StoreRealTimeTemperatureThread;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by barry on 2015/3/11.
@@ -17,8 +16,8 @@ public class RealTimeTemperatureManager {
 
     @PostConstruct
     public void init(){
-        thread = new StoreRealTimeTemperatureThread(new ArrayBlockingQueue<RealTimeTemperature>(50));
-        new Thread(thread).start();
+        /*thread = new StoreRealTimeTemperatureThread(new ArrayBlockingQueue<RealTimeTemperature>(50));
+        new Thread(thread).start();*/
     }
 
     public RealTimeTemperature getRealTimeTemperature(){

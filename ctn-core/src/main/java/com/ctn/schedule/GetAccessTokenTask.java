@@ -1,17 +1,14 @@
 package com.ctn.schedule;
 
-import java.util.logging.Logger;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.ctn.cache.AccessTokenCache;
 import com.ctn.constant.Constant;
 import com.ctn.entity.AccessToken;
 import com.ctn.util.HttpRequestUtil;
 import com.ctn.util.JsonMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.logging.Logger;
 
 /**
  * 微信Access Token 获取定时任务
@@ -19,14 +16,14 @@ import com.ctn.util.JsonMapper;
  * @author Barry.LJ.Huang
  *
  */
-@Component
-public class GetAccessTokenTask{
+//@Component
+public class GetAccessTokenTask {
 	private static Logger logger = Logger.getLogger(GetAccessTokenTask.class.getName());
 	@Value("${wechat.token.url}")
 	private String url;
 	@Autowired
 	private AccessTokenCache accessTokenCache;
-	@Scheduled(fixedDelay=Constant.REFRESH_ACCESS_TOKEN)
+//	@Scheduled(fixedDelay=Constant.REFRESH_ACCESS_TOKEN)
 	public void getAccessToken(){
 
 		/*AccessToken at = new AccessToken();

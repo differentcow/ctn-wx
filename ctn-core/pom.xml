@@ -12,6 +12,11 @@
 		<artifactId>ctn-wx-cache</artifactId>
 		<version>${project.version}</version>
 	</dependency>
+      <dependency>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
+          <version>1.9.1</version>
+      </dependency>
 	<dependency>
 		<groupId>ctn.wx</groupId>
 		<artifactId>ctn-wx-util</artifactId>

@@ -19,8 +19,8 @@ public class TranslateTest {
 
     @PostConstruct
     public void init(){
-        genTemp = new GenTemp(manager);
-        new Thread(genTemp).start();
+        /*genTemp = new GenTemp(manager);
+        new Thread(genTemp).start();*/
     }
 
 

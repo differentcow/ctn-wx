@@ -1,35 +1,24 @@
 package com.ctn.web.controller;
 
-import java.util.TreeSet;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ctn.cache.AccessTokenCache;
+import com.ctn.constant.Constant;
+import com.ctn.constant.WebHttpConnection;
+import com.ctn.entity.*;
+import com.ctn.schedule.GetAccessTokenTask;
+import com.ctn.service.MessageService;
+import com.ctn.util.EncoderHandler;
+import com.ctn.util.JsonMapper;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.ctn.cache.AccessTokenCache;
-import com.ctn.constant.Constant;
-import com.ctn.constant.WebHttpConnection;
-import com.ctn.entity.AccessToken;
-import com.ctn.entity.Menu;
-import com.ctn.entity.Message;
-import com.ctn.entity.RestResult;
-import com.ctn.entity.WxResult;
-import com.ctn.schedule.GetAccessTokenTask;
-import com.ctn.service.MessageService;
-import com.ctn.util.EncoderHandler;
-import com.ctn.util.JsonMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.TreeSet;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/base")
@@ -38,7 +27,7 @@ public class BaseController {
 	
 	@Autowired
 	private AccessTokenCache accessTokenCache;
-	@Autowired
+//	@Autowired
 	private GetAccessTokenTask getAccessTokenTask;
 	@Value("${wechat.token}")
 	private String token;
@@ -83,7 +72,7 @@ public static void main(String[] args) {
 				.substring(1, access.toString().length() - 1)
 				.replaceAll("\\, ", "");
 		String signatureSha1 = EncoderHandler.encode(
-				EncoderHandler.ALGORITHM_SHA1, signatureOrgin);
+                EncoderHandler.ALGORITHM_SHA1, signatureOrgin);
 		return signature.equals(signatureSha1);
 	}
 
