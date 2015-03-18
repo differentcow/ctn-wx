@@ -33,4 +33,13 @@ public class TemperatureServiceImpl extends BaseServiceImpl<Temperature> impleme
         return this.update(t,param) > 0;
     }
 
+    @Transactional
+    public boolean updateXY(Integer x,Integer y,Integer id){
+        GenericQueryParam param = new GenericQueryParam();
+        param.put(new QueryKey("id"),id);
+        Temperature t = new Temperature();
+        t.setX(x);t.setY(y);
+        return this.update(t,param) > 0;
+    }
+
 }

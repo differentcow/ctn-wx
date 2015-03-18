@@ -13,4 +13,6 @@ public interface TemperatureService<T> extends BaseService<T> {
     List<Temperature> getAll();
 
     boolean updateColor(String color, Integer id);
+
+    boolean updateXY(Integer x, Integer y, Integer id);
 }

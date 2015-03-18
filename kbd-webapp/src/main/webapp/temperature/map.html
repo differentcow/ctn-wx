@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+    <link rel="shortcut icon" href="#" type="image/png">
+    <title>温度</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <!--end copy-->
+</head>
+<body>
+<div style="padding: 0px;border: 0px;width: 634px;">
+<img id="place" src="map/floor.jpg" data-bind="event:{click:show_click}" style="margin: 0px;cursor: pointer;"/>
+</div>
+<!-- ko foreach: list -->
+    <div tag="temperature" data-bind="style:{backgroundColor:$data.color,left:$data.x,top:$data.y},attr:{id:$data.id}"
+         style="height:20px;width:20px;border-radius:5px;cursor: pointer;display: none;">&nbsp;</div>
+<!--/ko-->
+
+<!--<span  id="place" style="cursor:pointer;display:none;color:red;">&diams;</span>-->
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/knockout-3.1.0.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function MapModel(){
+        var me = this;
+        this.list = ko.observableArray([]);
+        this.mouseCheck = ko.observable(false);
+        this.init = function(){
+            var touch = parent.document.getElementById('mark_touch').value;
+            if(touch == 'Y'){
+                me.mouseCheck(true);
+            }
+            me.getList();
+        };
+        this.mouseOverEvent = function(_this){
+              if(me.mouseCheck()){
+                  var self = parent.document.getElementById($(_this).attr('id'));
+                  $(self).addClass('info');
+              }
+        };
+        this.mouseOutEvent = function(_this){
+            if(me.mouseCheck()){
+                var self = parent.document.getElementById($(_this).attr('id'));
+                $(self).removeClass('info');
+            }
+        };
+        this.getList = function(){
+            $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
+                if(data.state == 1){
+                    me.list([]);
+                    me.list(data.array);
+                    var ary = me.list();
+                    for(var i =0;i < ary.length;i++){
+                        $('#'+ary[i].id).css({position:'absolute',left:ary[i].x+'px',top:ary[i].y+'px',display:'block'});
+                    }
+                    if(me.mouseCheck()){
+                        $('div[tag=temperature]').mouseover(function(){
+                            me.mouseOverEvent(this);
+                        }).mouseout(function(){
+                            me.mouseOutEvent(this);
+                        });
+//                        me.intervalGetList();
+                    }
+                }
+            }).fail(function(error){
+                console.log(error);
+            });
+        };
+        this.show_click = function(){
+            var val = parent.document.getElementById('mark_xy');
+//            alert(val);
+            if(typeof val != 'undefined' && val != null && val.value == 'Y'){
+                var event = window.event || e;
+                var x = event.clientX-8;
+                var y = event.clientY-8;
+                parent.document.getElementById('mark_xy_x').value = x;
+                parent.document.getElementById('mark_xy_y').value = y;
+                var id = parent.document.getElementById('mark_xy_id').value;
+                var cricle = document.getElementById(id);
+                var color = parent.document.getElementById('mark_xy_color').value;
+                if(typeof cricle == 'undefined' || cricle == null){
+                    $('<div  id="'+id+'" style="background-color:'+color+';cursor:pointer;display:none;height:20px;width:20px;border-radius:5px;">&nbsp;</div>').appendTo('body');
+                }
+                $('#'+id).css({position:'absolute',left:x+'px',top:y+'px',display:'block'});
+            }
+        };
+    };
+    var model = new MapModel();
+    model.init();
+    ko.applyBindings(model);
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <meta name="description" content="">
+        <!-- <link rel="shortcut icon" href="#" type="image/png"> -->
+        <title>温度</title>
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <!--end copy-->
+	</head>
+	<body>
+    <div class="container-fluid">
+        <div style="height: 150px;">
+            <div class="page-header" style="text-align: center;">
+                <h1>温度计展示</h1>
+            </div>
+            <input type="hidden" id="mark_touch" value="Y" />
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-2 col-lg-offset-2 col-md-offset-2 col-md-5 col-lg-5 col-sm-5">
+                <div>
+                    <iframe id="map_iframe" name="map_iframe" scrolling="no" data-bind="attr:{src:mapPath}" style="width: 635px;height: 355px;border: 1px solid #000000;"></iframe>
+                </div>
+                <div>
+                    <a href="list.html">返回列表</a>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 col-sm-3">
+                <table class="table">
+                    <tbody data-bind="foreach:list">
+                    <tr data-bind="attr:{id:$data.id}">
+                        <td data-bind="text:$data.temp_code"></td>
+                        <td align="center"><div data-bind="style:{backgroundColor:$data.color}" style="height:20px;width:20px;border-radius:5px;">&nbsp;</div></td>
+                        <td>
+                            <span data-bind="text:$data.celsius"></span><span>(&#176;C)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.humidity"></span><span>(%rh)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.light"></span><span>(nt)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.electric"></span><span>(V)</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+	</body>
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery-1.11.1.min.js"></script>
+    <script src="../js/knockout-3.1.0.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function TemperatureModel() {
+            var me = this;
+            this.list = ko.observableArray([]);
+            this.mapPath = ko.observable('');
+            this.init = function(){
+               me.mapPath('map.html');
+               me.getList();
+            };
+            this.getList = function(){
+                $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
+                    if(data.state == 1){
+                        me.list([]);
+                        me.list(data.array);
+                    }
+                    setTimeout(function(){me.getList();},5000);
+                }).fail(function(error){
+                    console.log(error);
+                });
+            };
+        };
+        var model = new TemperatureModel();
+        model.init();
+        ko.applyBindings(model);
+    </script>
+</html>

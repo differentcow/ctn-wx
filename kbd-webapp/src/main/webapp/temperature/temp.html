@@ -23,7 +23,7 @@
             var currentAmount = 0;
 			var startAmount = -10;
 			function intervalLoad(){
-                $.when($.getJSON("/wx/service/temp/real.json")).done(function(data){
+                $.when($.getJSON("/wx/service/temp/real.json?t="+Math.random())).done(function(data){
 
                     if(data.state != 0){
                         startAmount = currentAmount;
@@ -52,6 +52,9 @@
                 <div id="centered">
                     <!--add this line to the html where you want the thermometer-->
                     <div id="goal-thermometer"></div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="list.html" style="color: #ffffff;">返回列表</a>
                 </div>
             </div>
         </div>

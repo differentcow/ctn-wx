@@ -10,12 +10,18 @@
 	</head>
 	<body>
     <div>
+        <div style="height: 150px;">
+            <div style="text-align: center;">
+                <h1>冷链温度展示</h1>
+            </div>
+        </div>
         <div id="main" style="height:400px"></div>
         <!--<div id="main2" style="height:400px"></div>-->
         <div>
             <button id="start" mark="N">录入实时数据</button>
             <button id="store" disabled="disabled">录入存储数据</button>
-            <button id="reset" mark="N">重置</button>
+            <button id="reset" mark="N">重置</button>&nbsp;&nbsp;
+            <a href="temperature/list.html">返回温度计展示</a>
             <input type="hidden" value="N" id="switch"/>
         </div>
         <script src="js/echarts-s.js"></script>

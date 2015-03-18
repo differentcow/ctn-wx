@@ -25,10 +25,14 @@ import java.util.Map;
 public class TempController {
 
     private Map<String,Object> map;
+    private Map<String,Object> mapXY;
+    private Map<String,Object> mapColor;
 
     @PostConstruct
     public void init(){
         map = new HashMap<String,Object>();
+        mapXY = new HashMap<String,Object>();
+        mapColor = new HashMap<String,Object>();
     }
 
     @Autowired
@@ -37,6 +41,7 @@ public class TempController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request,HttpServletResponse response){
         try {
+            System.out.println("获取数据");
             List<Temperature> temps = tempService.getAll();
             if (!temps.isEmpty()){
                 map.put("state",1);
@@ -57,14 +62,28 @@ public class TempController {
             if(StringUtils.isNotBlank(color)){
                 String idStr = value.get("id");
                 if (StringUtils.isNumeric(idStr) && tempService.updateColor(color,Integer.valueOf(idStr))){
-                    map.put("color_state",1);
-                    return map;
+                    mapColor.put("state",1);
+                    return mapColor;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        map.put("color_state",0);
-        return map;
+        mapColor.put("state",0);
+        return mapColor;
+    }
+
+    @RequestMapping(value = "/xy/upt", method = RequestMethod.PUT)
+    public Object uptXY(@RequestBody Map<String,Integer> value){
+        try {
+        if (tempService.updateXY(value.get("x"), value.get("y"), value.get("id"))){
+            mapXY.put("state",1);
+            return mapXY;
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mapXY.put("state",0);
+        return mapXY;
     }
 }

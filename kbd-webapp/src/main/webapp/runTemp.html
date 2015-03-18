@@ -150,12 +150,17 @@
 </head>
 <body>
 <script src="js/highcharts.js"></script>
-
+<div style="height: 150px;">
+    <div style="text-align: center;">
+        <h1>冷链温度展示</h1>
+    </div>
+</div>
 <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
 <div>
     <button id="start" mark="N">录入实时数据</button>
     <button id="store" disabled="disabled">录入存储数据</button>
-    <button id="reset" mark="N">重置</button>
+    <button id="reset" mark="N">重置</button>&nbsp;&nbsp;
+    <a href="temperature/list.html">返回温度计展示</a>
     <input type="hidden" value="N" id="switch"/>
 </div>
 

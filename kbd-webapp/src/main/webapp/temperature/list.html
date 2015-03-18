@@ -12,36 +12,59 @@
 	</head>
 	<body>
     <div class="container-fluid">
-        <div style="height: 150px;">&nbsp;</div>
+        <div style="height: 150px;">
+            <div class="page-header" style="text-align: center;">
+                <h1>温度计展示</h1>
+            </div>
+        </div>
         <div class="table-responsive" style="padding-right: 100px;padding-left: 100px;">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <td>编号</td>
-                        <td align="center">颜色</td>
-                        <td>温度</td>
-                        <td>湿度</td>
-                        <td>光线</td>
-                        <td>电压</td>
-                        <td>操作</td>
+                        <td><h4>编号</h4></td>
+                        <td align="center"><h4>颜色</h4></td>
+                        <td><h4>温度</h4></td>
+                        <td><h4>湿度</h4></td>
+                        <td><h4>光强度</h4></td>
+                        <td><h4>电压</h4></td>
+                        <td><h4>操作</h4></td>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach:list">
                     <tr>
-                        <td data-bind="text:$data.temp_code"></td>
-                        <td align="center"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:20px;width:20px;border-radius:5px;">&nbsp;</div></td>
-                        <td data-bind="text:$data.celsius"></td>
-                        <td data-bind="text:$data.humidity"></td>
-                        <td data-bind="text:$data.light"></td>
-                        <td data-bind="text:$data.electric"></td>
-                        <td><a href="#" data-bind="click:function(){forwardDetail($data.id);}">详细</a></td>
+                        <td><h1><span data-bind="text:$data.temp_code"></span></h1></td>
+                        <td align="center"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:80px;width:80px;border-radius:5px;">&nbsp;</div></td>
+                        <td><h1><span data-bind="text:$data.celsius,attr:{id:'celsius_'+$data.id}"></span></h1></td>
+                        <td><h1><span data-bind="text:$data.humidity,attr:{id:'humidity_'+$data.id}"></span></h1></td>
+                        <td><h1><span data-bind="text:$data.light,attr:{id:'light_'+$data.id}"></span></h1></td>
+                        <td><h1><span data-bind="text:$data.electric,attr:{id:'electric_'+$data.id}"></span></h1></td>
+                        <td>
+                            <h1><a href="#" data-bind="click:function(){$root.forwardDetail($data.id);}">详细</a>&nbsp;
+                            &nbsp;<a href="#" data-bind="click:function(){$root.qrCode($data.id,$data.temp_code);}">二维码</a></h1>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
-                    <tr><td colspan="7"><a href="#">切换地图</a></td></tr>
+                    <tr><td colspan="7"><a href="mapList.html">切换地图</a>&nbsp;&nbsp;<a href="../runTemp.html">冷链温度展示</a></td></tr>
                 </tfoot>
             </table>
         </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <img alt="" id="qrcode">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 	</body>
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
@@ -53,17 +76,36 @@
         function TemperatureModel() {
             var me = this;
             this.list = ko.observableArray([]);
+            this.first_time = ko.observable(true);
             this.init = function(){
                me.getList();
             };
             this.forwardDetail = function(id){
                 window.location.href="temp.html?id="+id;
             };
+            this.qrCode = function(id,code){
+                $('.modal-title').text('二维码:['+code+']');
+                $('#qrcode').attr("src","/wx/service/qr/code?content="+id+"&t="+Math.random());
+                $('#myModal').modal('toggle');
+            };
             this.getList = function(){
                 $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
-                    me.list([]);
                     if(data.state == 1){
-                        me.list(data.array);
+                        if(me.first_time()){
+                            me.list([]);
+                            me.list(data.array);
+                            me.first_time(false);
+                        }else{
+                            for(var i = 0;i < data.array.length;i++){
+                                for(var k in data.array[i]){
+                                    if(k == 'celsius' || k == 'electric' || k == 'humidity' || k == 'light'){
+                                        $('#'+k+'_'+data.array[i].id).slideToggle('slow');
+                                        $('#'+k+'_'+data.array[i].id).text(data.array[i][k]);
+                                        $('#'+k+'_'+data.array[i].id).slideToggle('slow');
+                                    }
+                                }
+                            }
+                        }
                     }
                     setTimeout(function(){
                         me.getList();

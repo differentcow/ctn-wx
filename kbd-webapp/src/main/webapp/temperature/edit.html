@@ -12,7 +12,14 @@
 	</head>
 	<body>
     <div class="container-fluid">
-        <div style="height: 150px;">&nbsp;</div>
+        <div style="height: 150px;">
+            <input type="hidden" id="mark_touch" value="N" />
+            <input type="hidden" id="mark_xy" />
+            <input type="hidden" id="mark_xy_x" />
+            <input type="hidden" id="mark_xy_y" />
+            <input type="hidden" id="mark_xy_id" />
+            <input type="hidden" id="mark_xy_color" />
+        </div>
         <div class="row">
             <div class="col-sm-offset-2 col-lg-offset-2 col-md-offset-2 col-md-3 col-lg-3 col-sm-3">
                 <table class="table">
@@ -29,7 +36,7 @@
                         <td data-bind="text:$data.temp_code"></td>
                         <td align="center"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:20px;width:20px;border-radius:5px;">&nbsp;</div></td>
                         <td><input data-bind="event:{blur:function(){$root.changeColor($data.id,$data.color);}},value:$data.color"/></td>
-                        <td><a href="#" data-bind="click:function(){$root.setPosition($data.id);}">定点</a></td>
+                        <td><a tag="position" href="#" data-bind="click:function(){$root.setPosition($data.id,$element);}">定点</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -56,8 +63,42 @@
                me.mapPath('map.html');
                me.getList();
             };
-            this.setPosition = function(id){
-
+            this.updateXY = function(x,y,id){
+                $.when($.ajax({
+                    url: "/wx/service/temperature/xy/upt.json",
+                    type: "PUT",
+                    data:JSON.stringify({x:x,y:y,id:id}),
+                    contentType : 'application/json'
+                })).done(function(data){
+                    if(data.state == 1){
+                        $('a[tag=position]').each(function(){
+                            $(this).text('定点')
+                        });
+                        $('#mark_xy').val('');
+                        $('#mark_xy_id').val('');
+                        $('#mark_xy_color').val('');
+                        $('#mark_xy_x').val('');
+                        $('#mark_xy_y').val('');
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
+            };
+            this.setPosition = function(id,_this){
+                var mark = $('#mark_xy').val();
+                if(mark == 'Y'){
+                    var x = $('#mark_xy_x').val();
+                    var y = $('#mark_xy_y').val();
+                    me.updateXY(x,y,id);
+                }else{
+                    $('a[tag=position]').each(function(){
+                        $(this).text('')
+                    });
+                    $(_this).text('确定');
+                    $('#mark_xy').val('Y');
+                    $('#mark_xy_id').val(id);
+                    $('#mark_xy_color').val( $('#'+id).css('background-color'));
+                }
             };
             this.changeColor = function(id,color){
                 var url = "/wx/service/temperature/color/upt.json";
@@ -68,18 +109,17 @@
                     data:JSON.stringify(param),
                     contentType : 'application/json'
                 })).done(function(data){
-                    if(data.color_state == 1){
+                    if(data.state == 1){
                         $('#'+id).css('background-color',color);
                     }
                 }).fail(function(error){
                     console.log(error);
                 });
-
             };
             this.getList = function(){
                 $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
-                    me.list([]);
                     if(data.state == 1){
+                        me.list([]);
                         me.list(data.array);
                     }
                 }).fail(function(error){
