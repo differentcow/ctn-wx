@@ -24,6 +24,7 @@ public class FrameManager {
 
     private Map<String,Object> map;
     private Frame frame;
+    private Map<String,Packet> mapPacket;
     private Integer index;
 
     public FrameManager(){
@@ -37,6 +38,78 @@ public class FrameManager {
         return frame;
     }
 
+    public void loadPacket(String path){
+        if(mapPacket == null){
+            mapPacket = new HashMap<String,Packet>();
+        }
+        if (map == null){
+            map = new HashMap<String,Object>();
+        }
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(path);
+        try {
+            XMLEventReader reader = factory.createXMLEventReader(in);
+            Packet packet = new Packet();
+            Segment segment = null;
+            com.ctn.entity.tcp.Attribute att = null;
+            Head head = null;
+            Validate validate = null;
+            boolean isCheck = false;
+            while(reader.hasNext()){
+                XMLEvent event = reader.nextEvent();
+                if(event.isStartElement()){
+                    StartElement start = event.asStartElement();
+                    String name = start.getName().toString();
+                    if(ELEMENT_NAME_PACKET.equals(name)){
+                        packet.setSegment(new ArrayList<Segment>());
+                        map.put(name,packet);
+                    }
+                    if(ELEMENT_NAME_SEGMENT.equals(name)){
+                        segment = new Segment();
+                        segment.setAttr(new ArrayList<com.ctn.entity.tcp.Attribute>());
+                        map.put(name,segment);
+                    }
+                    if (ELEMENT_NAME_ATTR.equals(name)){
+                        att = new com.ctn.entity.tcp.Attribute();
+                        map.put(name,att);
+                    }
+                    Iterator<Attribute> it =  start.getAttributes();
+                    while (it.hasNext()){
+                        Attribute attr = it.next();
+                        Method method = map.get(name).getClass().getMethod(getMethodName(attr.getName().toString()),String.class);
+                        method.invoke(map.get(name),attr.getValue());
+                    }
+                    if(ELEMENT_NAME_PACKET.equals(name)){
+                        Object o =map.get(name);
+                        if (o != null && StringUtils.isNotBlank(((Packet)o).getId())){
+                            mapPacket.put(((Packet)o).getId(),packet);
+                        }
+                    }
+                }
+                if (event.isEndElement()){
+                    EndElement end = event.asEndElement();
+                    String name = end.getName().toString();
+                    if(ELEMENT_NAME_SEGMENT.equals(name)){
+                        ((Packet)map.get(ELEMENT_NAME_PACKET)).getSegment().add((Segment)map.get(name));
+                    }
+                    if(ELEMENT_NAME_ATTR.equals(name)){
+                        ((Segment)map.get(ELEMENT_NAME_SEGMENT)).getAttr().add((com.ctn.entity.tcp.Attribute) map.get(name));
+                    }
+                }
+            }
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Packet framePacket;
+
     public void load(String path){
         if (map == null){
             map = new HashMap<String,Object>();
@@ -47,6 +120,7 @@ public class FrameManager {
             XMLEventReader reader = factory.createXMLEventReader(in);
             frame = new Frame();
             Segment segment = null;
+            Data data = null;
             Head head = null;
             Validate validate = null;
             boolean isCheck = false;
@@ -65,6 +139,7 @@ public class FrameManager {
                     }
                     if(ELEMENT_NAME_SEGMENT.equals(name)){
                         segment = new Segment();
+                        segment.setData(new ArrayList<Data>());
                         map.put(name,segment);
                     }
                     if(ELEMENT_NAME_VALIDATE.equals(name)){
@@ -83,6 +158,10 @@ public class FrameManager {
                     if (ELEMENT_NAME_CHECK.equals(name)){
                         isCheck = true;
                     }
+                    if (ELEMENT_NAME_DATA.equals(name)){
+                        data = new Data();
+                        map.put(name,data);
+                    }
                     Iterator<Attribute> it =  start.getAttributes();
                     while (it.hasNext()){
                         Attribute attr = it.next();
@@ -91,6 +170,9 @@ public class FrameManager {
                     }
                     if (ELEMENT_NAME_EXPRESS.equals(name)){
                         ((Validate)map.get(ELEMENT_NAME_VALIDATE)).getExpress().add((Express)map.get(name));
+                    }
+                    if (ELEMENT_NAME_DATA.equals(name)){
+                        ((Segment)map.get(ELEMENT_NAME_SEGMENT)).getData().add((Data)map.get(name));
                     }
                 }
                 if (event.isEndElement()){
@@ -160,6 +242,17 @@ public class FrameManager {
                     }else{
                         //未通过检验，认为不是系统所需数据，放弃数据
                         System.out.println("未通过检验，认为不是系统所需数据，放弃数据");
+                    }
+                    for (Data data : s.getData()){
+                        if (decodeExpress(data.getExFilter(),bytes)){
+                            framePacket = mapPacket.get(data.getRef());
+                            String start = decode(data.getExStart().getExpressList(),null,null,bytes);
+                            String len = decode(data.getExLen().getExpressList(),null,null,bytes);
+                            if (StringUtils.isNumeric(start) && StringUtils.isNumeric(len)){
+                                byte[] bs = HexUtil.getSubBytes(bytes,Integer.valueOf(start),Integer.valueOf(len),false);
+                            }
+                        }
+
                     }
                 }
                 mark = mark + (s.getLen() == null?0:Integer.valueOf(s.getLen()));
@@ -257,9 +350,13 @@ public class FrameManager {
             }else if("nq".equals(express.getOperate())){
 
             }
+        }else{
+            singleResult = decode(express.getExpressList(),express.getStart(),express.getLen(),bytes);
         }
         return result;
     }
+
+    private String singleResult;
 
     private String decode(List<String> list,Integer start,Integer len,byte[] bytes){
         Stack<String> stack = new Stack<String>();
@@ -348,7 +445,7 @@ public class FrameManager {
 
     public static void main(String[] args){
         FrameManager f = new FrameManager();
-        f.load("frame/frame_up.xml");
+        f.loadPacket("packet/packet_sleep.xml");
 
         byte[] bs = new byte[]{0x10,0x02,0x01,0x00,0x05,0x24,0x08,0x41,0x01,0x00,0x41,0x54,0x52,0x4D,0x56,0x34, (byte) 0x91,
                                0x18,0x56,0x4D,0x52,0x54,0x41,0x30,0x30,0x33,0x32,0x31,0x01,0x01,
@@ -359,11 +456,14 @@ public class FrameManager {
 
 
     private final static String ELEMENT_NAME_FRAME = "Frame";
+    private final static String ELEMENT_NAME_PACKET = "Packet";
     private final static String ELEMENT_NAME_FRAME_HEAD = "head";
     private final static String ELEMENT_NAME_CHECK = "check";
     private final static String ELEMENT_NAME_SEGMENT = "segment";
     private final static String ELEMENT_NAME_VALIDATE = "validate";
     private final static String ELEMENT_NAME_EXPRESS = "express";
+    private final static String ELEMENT_NAME_ATTR = "attr";
+    private final static String ELEMENT_NAME_DATA = "data";
 
 
 

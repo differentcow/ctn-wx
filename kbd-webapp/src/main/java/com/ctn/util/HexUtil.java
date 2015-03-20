@@ -26,6 +26,8 @@ public class HexUtil {
         return temp.toString();
     }
 
+
+
     /**将byte[]转化成string**/
     public static String bytes2string(byte[] bs,boolean reverse){
         String temp="";

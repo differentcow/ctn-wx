@@ -1,5 +1,7 @@
 package com.ctn.entity.tcp;
 
+import java.util.List;
+
 /**
  * Created by barry on 2015/3/13.
  */
@@ -13,23 +15,33 @@ public class Segment extends FrameData{
 
     private Integer end;
 
-    private Attribute attr;
+    private List<Attribute> attr;
 
     private String len;
 
+    private List<Data> data;
+
     public String getLen() {
         return len;
+    }
+
+    public List<Data> getData() {
+        return data;
+    }
+
+    public void setData(List<Data> data) {
+        this.data = data;
     }
 
     public void setLen(String len) {
         this.len = len;
     }
 
-    public Attribute getAttr() {
+    public List<Attribute> getAttr() {
         return attr;
     }
 
-    public void setAttr(Attribute attr) {
+    public void setAttr(List<Attribute> attr) {
         this.attr = attr;
     }
 

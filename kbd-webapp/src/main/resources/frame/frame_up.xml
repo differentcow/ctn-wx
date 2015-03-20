@@ -24,11 +24,9 @@
             <express type="10" value="this[value] eq 8"/>
         </validate>
     </segment>
-    <segment name="source_addr" expressLen="parent[6]"></segment>
-    <segment name="data" expressLen="parent[5] - parent[6] - 1">
-        <packet ref="sleep_time">
-            <filter test="this[0] eq v10(31)"></filter>
-        </packet>
+    <segment name="source_addr"></segment>2
+    <segment name="data">
+        <data ref="sleep_time" filter="this[this[6]+7] eq v10(31)" start="this[6]+7" len="this[5]-1-this[6]"/>
     </segment>
     <segment name="verification" len="1"></segment>
     <check>
