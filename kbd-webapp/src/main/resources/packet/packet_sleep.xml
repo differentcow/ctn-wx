@@ -5,8 +5,5 @@
     <segment name="data_len" len="1"></segment>
     <segment name="data">
         <attr name="sleep" len="4"></attr>
-        <validate>
-            <express>${v10(data_len.value) eq data.sleep.len }</express>
-        </validate>
     </segment>
 </Packet>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>温度</title>
+    <style type="text/css">
+        .contain-temp {
+            -webkit-box-flex: 1;width: 100%;
+        }
+        .contain-temp-div {
+            -webkit-box-flex: 1;width: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+        var one_day = 1000 * 60 * 60 * 24;
+        Date.prototype.format = function (format) {
+            var o = {
+                "M+": this.getMonth() + 1,
+                "d+": this.getDate(),
+                "h+": this.getHours(),
+                "m+": this.getMinutes(),
+                "s+": this.getSeconds(),
+                "q+": Math.floor((this.getMonth() + 3) / 3),
+                "S": this.getMilliseconds()
+            }
+            if (/(y+)/.test(format)) {
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(format)) {
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+                }
+            }
+            return format;
+        };
+
+        function getFormatDate(date, pattern) {
+            if (date == undefined) {
+                date = new Date();
+            }
+            if (pattern == undefined) {
+                pattern = "yyyy-MM-dd hh:mm:ss";
+            }
+            return date.format(pattern);
+        }
+        function getTodayLongTime(){
+            var d = new Date();
+            var str = getFormatDate(d,"yyyy/MM/dd");
+            var date = new Date(str).getTime();
+            return date;
+        }
+            var chart;
+            function storeSpline(mark,data,series){
+                setTimeout(function(){
+                    var x = data[mark].x;
+                    var y = data[mark].y;
+                    series.addPoint([x,y], true, false);
+                    mark++;
+                    if(data.length > mark){
+                        storeSpline(mark,data,series);
+                    }
+                },500);
+            }
+            $(document).ready(function() {
+                $('#store').click(function(){
+                    var from = $('#from').val();
+                    var to = $('#to').val();
+                    var fd = new Date(from.replace(/-/g,"/")).getTime();
+                    var td = new Date(to.replace(/-/g,"/")).getTime();
+                    $.when($.getJSON("/wx/service/chart/day.json?from="+fd+"&to="+ td+"&t="+Math.random())).done(function(data){
+                        var series = chart.series[0];
+                        series.setData([{x:data.ary[0].x,y:data.ary[0].y}],true);
+                        storeSpline(1,data.ary,series);
+//                        series.setData(data.ary);
+                        //series.update({name:'T1温度存储数据'},true);
+                    }).fail(function(error){
+                        console.log(error);
+                    });
+                });
+
+
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                $('#container').highcharts({
+                    chart: {
+                        type: 'line',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10,
+
+                        events: {
+                            load: function() {
+                                // set up the updating of the chart each second
+                                chart = this;
+                                var series = this.series[0];
+                                    var date = getTodayLongTime();
+                                    var to = date - one_day;
+                                    var from = date - (one_day * 10);
+                                    $.when($.getJSON("/wx/service/chart/day.json?from="+from+"&to="+ to+"&t="+Math.random())).done(function(data){
+                                        if(1 == data.state){
+                                            storeSpline(0,data.ary,series);
+                                        }
+                                    }).fail(function(error){
+                                        console.log(error);
+                                    });
+                                    /*
+                                    var x = (new Date()).getTime(), // current time
+                                            y = Math.random();
+                                    series.addPoint([x, y], true, false);*/
+                            }
+                        }
+                    },
+                    title: {
+                        text: '温度统计(°C)'
+                    },
+                    credits :{
+                        enabled:false
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            day: '%e of %b'
+                        },
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature(°C)'
+                        },
+                        labels: {
+                            formatter: function() {
+                                return this.value +'°C';
+                            }
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        crosshairs: true,
+                        shared: true
+                    },
+                    legend: {
+                        enabled: true
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: '温度数据',
+                        data: (function() {
+                            // generate an array of random data
+                            var data = [];
+                            return data;
+                        })()
+                    }]
+                });
+            });
+    </script>
+</head>
+<body>
+<script src="../js/highcharts.js"></script>
+<div class="contain-temp">
+    <input type="date" id="from" />&nbsp;&nbsp;<input type="date" id="to" />&nbsp;&nbsp;<button id="store" >载入</button>
+</div>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+<div class="contain-temp">
+    <a href="temp.html">返回</a>
+</div>
+
+</body>
+</html>

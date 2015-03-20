@@ -47,6 +47,26 @@ public class ChartController {
         return new BigDecimal(f1).subtract(new BigDecimal(5)).floatValue();
     }
 
+    private long oneDay = 24 * 60 * 60 *1000;
+
+    @RequestMapping(value = "/day", method = RequestMethod.GET)
+    public Object chartDayDatas(HttpServletRequest request,HttpServletResponse response){
+        Long from = Long.valueOf(request.getParameter("from"));
+        Long to = Long.valueOf(request.getParameter("to"));
+        Map<String,Object> map = new HashMap<String,Object>();
+        List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+        for (long i = from; i <= to;){
+            Map<String,Object> m = new HashMap<String,Object>();
+            m.put("x",i);
+            m.put("y",getRandomFloat());
+            lists.add(m);
+            i += oneDay;
+        }
+        map.put("ary",lists);
+        map.put("state",1);
+        return map;
+    }
+
     @RequestMapping(value = "/datas", method = RequestMethod.GET)
     public Object chartDatas(HttpServletRequest request,HttpServletResponse response){
         Map<String,Object> map = new HashMap<String,Object>();

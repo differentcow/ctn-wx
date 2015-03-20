@@ -13,6 +13,26 @@ public class Segment extends FrameData{
 
     private Integer end;
 
+    private Attribute attr;
+
+    private String len;
+
+    public String getLen() {
+        return len;
+    }
+
+    public void setLen(String len) {
+        this.len = len;
+    }
+
+    public Attribute getAttr() {
+        return attr;
+    }
+
+    public void setAttr(Attribute attr) {
+        this.attr = attr;
+    }
+
     public Integer getStart() {
         return start;
     }

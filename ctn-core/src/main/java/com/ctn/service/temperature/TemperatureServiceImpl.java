@@ -30,6 +30,7 @@ public class TemperatureServiceImpl extends BaseServiceImpl<Temperature> impleme
         param.put(new QueryKey("id"),id);
         Temperature t = new Temperature();
         t.setColor(color);
+        t.setUpdate_time(System.currentTimeMillis());
         return this.update(t,param) > 0;
     }
 
@@ -39,6 +40,7 @@ public class TemperatureServiceImpl extends BaseServiceImpl<Temperature> impleme
         param.put(new QueryKey("id"),id);
         Temperature t = new Temperature();
         t.setX(x);t.setY(y);
+        t.setUpdate_time(System.currentTimeMillis());
         return this.update(t,param) > 0;
     }
 
