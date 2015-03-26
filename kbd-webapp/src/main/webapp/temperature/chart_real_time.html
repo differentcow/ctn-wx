@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <title>温度</title>
+    <style type="text/css">
+        .contain-temp {
+            -webkit-box-flex: 1;width: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script src="js/dateFormat.js"></script>
+    <script type="text/javascript">
+        var one_day = 1000 * 60 * 60 * 24;
+        function start(chart,isnow,time){
+            $.when($.getJSON("/wx/service/chart/realtime.json?t="+Math.random()+'&isnow='+isnow+'&time='+time)).done(function(data){
+                if(data.state == 1){
+                    if(isnow == 1){
+                        var option = returnOption(data.ary);
+                        chart = new Highcharts.Chart(option);
+                    }else{
+                        var series = chart.series[0];
+                        series.addPoint([data.x, data.y], true, true);
+                    }
+                    var nowTime = data.y;
+                    setTimeout(function(){
+                        start(chart,0,nowTime);
+                    },10000);
+                }
+            }).fail(function(error){
+                console.log(error);
+            });
+        }
+        function returnOption(data){
+            return {
+                chart: {
+                    renderTo:'container',
+                    type: 'line',
+                    animation: Highcharts.svg, // don't animate in old IE
+                    marginRight: 10
+                },
+                title: {text: '温度统计'},
+                credits :{enabled:false},
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        minute: '%H:%M',
+                        second: '%H:%M:%S'
+                    },
+                    tickPixelInterval: 150
+                },
+                yAxis: {
+                    title: {text: '温度(°C)'},
+                    labels: {formatter: function() { return this.value +'°C'; }},
+                    plotLines: [{value: 0,width: 1,color: '#808080'}]
+                },
+                tooltip: {crosshairs: true},
+                legend: {enabled: true},
+                exporting: {enabled: false},
+                series: [{name: '实时温度',data: data}]
+            };
+        }
+
+        $(document).ready(function() {
+            var chart;
+            start(chart,1,0);
+        });
+    </script>
+</head>
+<body style="background-color: #ffffff;">
+<script src="../js/highcharts.js"></script>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+<div class="contain-temp">
+    <a href="temp.html">返回</a>
+</div>
+
+</body>
+</html>

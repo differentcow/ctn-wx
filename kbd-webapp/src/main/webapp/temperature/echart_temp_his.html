@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <title>温度</title>
+        <style type="text/css">
+            @media screen and (orientation:portrait) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+            @media screen and (orientation:landscape) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+        </style>
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+	</head>
+	<body style="background-color: #ffffff;">
+    <div class="contain-temp">
+        <div class="contain-temp">
+            从<input type="date" id="from" />&nbsp;<select id="selFrom"></select>:<select id="minFrom"><option value="00">00</option><option value="00">30</option></select>
+            <br>
+            到<input type="date" id="to" />&nbsp;<select id="selTo"></select>:<select id="minTo"><option value="00">00</option><option value="00">30</option></select>
+            <button id="store" >载入</button>
+        </div>
+        <div id="main" style="height: 400px;width: 100%;" class="contain-temp"></div>
+        <!--<div id="main2" style="height:400px"></div>-->
+        <div class="contain-temp">
+            <a href="temp.html">返回</a>
+            <input type="hidden" id="mark" value="Y" />
+        </div>
+        <script src="js/dateFormat.js"></script>
+        <script src="../js/echarts-s.js"></script>
+        <script type="text/javascript">
+            var one_day = 1000 * 60 * 60 * 24;
+            require.config({
+                paths: {
+                    echarts: '../js'
+                }
+            });
+            require(['echarts','echarts/chart/bar','echarts/chart/line','echarts/chart/config'],function (ec) {
+                        var TempModel = function(){
+                            var me = this;
+                            this.chart = null;
+                            this.xdata = [];
+                            this.max = [];
+                            this.min = [];
+                            this.avg = [];
+                            this.top = [];
+                            this.botton = [];
+                            this.loadData = function(){
+                                var from = $('#from').val();
+                                var to = $('#to').val();
+                                var from_h = $('#selFrom').val();
+                                var to_h = $('#selTo').val();
+                                var from_m = $('#minFrom').val();
+                                var to_m = $('#minTo').val();
+                                var fd = new Date((from+" "+from_h+":"+from_m+":00").replace(/-/g,"/")).getTime();
+                                var td = new Date((to+" "+to_h+":"+to_m+":00").replace(/-/g,"/")).getTime();
+                                $.when($.getJSON("/wx/service/echart/his.json?from="+fd+"&to="+ td+"&t="+Math.random()+'&load=y')).done(function(data){
+                                    if(data.state == 1){
+                                        me.xdata = [];me.min = [];me.max = [];me.avg = [];
+                                        for(var i = 0;i < data.xdata.length;i++){
+                                            me.xdata.push(getFormatDate(new Date(data.xdata[i]),'MM/dd hh:mm'));
+                                            me.max.push({value:data.max[i].val,tooltip:{trigger: 'item',formatter:'温度:'+data.max[i].val+' 实际时间:'+getFormatDate(new Date(data.max[i].real),'yyyy/MM/dd hh:mm:ss')}});
+                                            me.min.push({value:data.min[i].val,tooltip:{trigger: 'item',formatter:'温度:'+data.min[i].val+' 实际时间:'+getFormatDate(new Date(data.min[i].real),'yyyy/MM/dd hh:mm:ss')}});
+                                        }
+                                        me.avg = data.avg;
+                                        me.option.series[0].data = me.max;
+                                        me.option.series[1].data = me.avg;
+                                        me.option.series[2].data = me.min;
+                                        me.option.xAxis[0].data = me.xdata;
+                                        me.chart.setOption(me.option,true);
+                                    }
+                                }).fail(function(error){
+                                    console.log(error);
+                                });
+                            };
+                            this.getData = function(){
+                                var to = getTodayLongTime();
+                                var from = to-one_day;
+                                $.when($.getJSON("/wx/service/echart/his.json?from="+from+'&to='+to+'&t='+Math.random()).done(function(data){
+                                    if(data.state == 1){
+                                        me.xdata = [];me.min = [];me.max = [];me.avg = [];me.top = [];me.botton = [];
+                                        for(var i = 0;i < data.xdata.length;i++){
+                                            me.xdata.push(getFormatDate(new Date(data.xdata[i]),'MM/dd hh:mm'));
+                                            me.max.push({value:data.max[i].val,tooltip:{trigger: 'item',formatter:'温度:'+data.max[i].val+' 实际时间:'+getFormatDate(new Date(data.max[i].real),'yyyy/MM/dd hh:mm:ss')}});
+                                            me.min.push({value:data.min[i].val,tooltip:{trigger: 'item',formatter:'温度:'+data.min[i].val+' 实际时间:'+getFormatDate(new Date(data.min[i].real),'yyyy/MM/dd hh:mm:ss')}});
+                                        }
+                                        me.avg = data.avg;me.top = data.top;me.botton = data.botton;
+                                        me.option.series[0].data = me.max;
+                                        me.option.series[1].data = me.avg;
+                                        me.option.series[2].data = me.min;
+                                        me.option.series[3].data = me.botton;
+                                        me.option.series[4].data = me.top;
+                                        me.option.xAxis[0].data = me.xdata;
+                                        me.render();
+                                    }
+                                }).fail(function(error){
+                                    console.log(error);
+                                }));
+                            };
+                            this.render = function(){
+                                //--- 折柱 ---
+                                me.chart = ec.init(document.getElementById('main'));
+                                me.chart.setOption(me.option);
+                                window.onresize = me.chart.resize;
+                            };
+                            this.init = function(){
+                                for(var i = 0;i < 24;i++){
+                                    $('<option value="'+i+'">'+i+'</option>').appendTo('#selFrom');
+                                    $('<option value="'+i+'">'+i+'</option>').appendTo('#selTo');
+                                }
+                            };
+                            this.option = {
+                                title : {
+                                    text: '温度统计'
+                                },
+                                tooltip : {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                    data:['最高','平均','最低']
+                                },
+                                toolbox: {
+                                    show : true,
+                                    feature : {
+                                        magicType : {show: true, type: ['line', 'bar']},
+                                        saveAsImage : {show: true}
+                                    }
+                                },
+                                calculable : true,
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        boundaryGap : false,
+                                        data:me.xdata
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value',
+                                        scale: true,
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        name : '温度(°C)',
+                                        boundaryGap: [0.2, 0.2],
+                                        axisLabel:{
+                                            formatter : function(val){
+                                                return val + '°C';
+                                            }
+                                        }
+                                    }
+                                ],
+                                series : [
+                                    {
+                                        name:'最高',
+                                        type:'line',
+                                        symbol:'none',
+                                        data:me.max
+                                    },
+                                    {symbol:'none',name:'平均',type:'line',data:me.avg},
+                                    {name:'最低',symbol:'none',type:'line',data:me.min},
+                                    {symbol:'none',name:'下限',type:'line',data:me.botton,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(255,255,255,1)',type: 'default'}}}},
+                                    {symbol:'none',name:'上限',type:'line',data:me.top,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(101,206,167,0.5)',type: 'default'}}}}
+                                ]
+                            };
+                        }
+                        var temp = new TempModel();
+
+                        temp.init();
+                        $(document).ready(function(){
+                            temp.getData();
+                            $('#store').click(function(){
+                                temp.loadData();
+                            });
+
+                        });
+
+                    }
+            );
+
+
+        </script>
+    </div>
+	</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <title>温度</title>
+    <style type="text/css">
+        .contain-temp {
+            -webkit-box-flex: 1;width: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script src="js/dateFormat.js"></script>
+    <script type="text/javascript">
+        var one_day = 1000 * 60 * 60 * 24;
+            function returnOption(max,min,avg){
+                return {
+                    chart: {
+                        renderTo:'container',
+                        type: 'line',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10
+                    },
+                    title: {text: '温度统计'},
+                    credits :{enabled:false},
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            day: '%e. %b',
+                            hour: '%H:%M',
+                            minute: '%H:%M'
+                        },
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {text: '温度(°C)'},
+                        labels: {
+                            formatter: function() { return this.value +'°C'; }
+                        },
+                        min: 0,
+                        minorGridLineWidth: 0,
+                        gridLineWidth: 0,
+                        alternateGridColor: null,
+                        plotBands: [{ // Light air
+                            from: 8,
+                            to: 20,
+                            color: 'rgba(68, 170, 213, 0.1)',
+                            label: {
+                                text: '安全区域(8-20)',
+                                style: {
+                                    color: '#606060'
+                                }
+                            }
+                        }]
+                    },
+
+                    tooltip: {
+                        crosshairs: [{
+                            width: 3,
+                            color: 'green'
+                        }, {
+                            width: 3,
+                            color: 'green'
+                        }],
+                        formatter:function(){
+                            return this.x + "-" + this.y ;
+                        },
+                        shared: false
+                    },
+                    legend: {
+                        enabled: true
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [
+                        {name: '最高',data: max},
+                        {name: '平均',data: avg},
+                        {name: '最低',data: min}
+                    ]
+                };
+            }
+
+            $(document).ready(function() {
+                var chart;
+
+                for(var i = 0;i < 24;i++){
+                    $('<option value="'+i+'">'+i+'</option>').appendTo('#selFrom');
+                    $('<option value="'+i+'">'+i+'</option>').appendTo('#selTo');
+                }
+
+                $('#store').click(function(){
+                    var from = $('#from').val();
+                    var to = $('#to').val();
+                    var from_h = $('#selFrom').val();
+                    var to_h = $('#selTo').val();
+                    var from_m = $('#minFrom').val();
+                    var to_m = $('#minTo').val();
+                    var fd = new Date((from+" "+from_h+":"+from_m+":00").replace(/-/g,"/")).getTime();
+                    var td = new Date((to+" "+to_h+":"+to_m+":00").replace(/-/g,"/")).getTime();
+                    $.when($.getJSON("/wx/service/chart/his.json?from="+fd+"&to="+ td+"&t="+Math.random()+'&load=y')).done(function(data){
+                        if(data.state == 1){
+                            var series = chart.series[0];
+                            series.setData(data.max,false);
+                            var series1 = chart.series[1];
+                            series1.setData(data.avg,false);
+                            var series2 = chart.series[2];
+                            series2.setData(data.min,false);
+                            chart.redraw();
+                        }
+                    }).fail(function(error){
+                        console.log(error);
+                    });
+                });
+
+                var to = getTodayLongTime();
+                var from = to-one_day;
+                $.when($.getJSON("/wx/service/chart/his.json?from="+from+"&to="+ to+"&t="+Math.random())).done(function(data){
+                    if(data.state = 1){
+                        var max = []
+                        for(var i = 0;i < data.max.length;i++){
+                            max.push({x:data.max[i].x,y:data.max[i].y,time:'cessssss'});
+                        }
+                        var option = returnOption(data.max,data.min,data.avg);
+                        chart = new Highcharts.Chart(option);
+                        /*var series = chart.series[0];
+                        series.setData(data.max,false);
+                        var series1 = chart.series[1];
+                        series1.setData(data.avg,false);
+                        var series2 = chart.series[2];
+                        series2.setData(data.min,false);
+                        chart.redraw();*/
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
+            });
+    </script>
+</head>
+<body style="background-color: #ffffff;">
+<script src="../js/highcharts.js"></script>
+<div class="contain-temp">
+    从<input type="date" id="from" />&nbsp;<select id="selFrom"></select>:<select id="minFrom"><option value="00">00</option><option value="00">30</option></select>
+    <br>
+    到<input type="date" id="to" />&nbsp;<select id="selTo"></select>:<select id="minTo"><option value="00">00</option><option value="00">30</option></select>
+    <button id="store" >载入</button>
+</div>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+<div class="contain-temp">
+    <a href="temp.html">返回</a>
+</div>
+
+</body>
+</html>

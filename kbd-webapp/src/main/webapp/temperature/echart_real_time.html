@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <title>温度</title>
+        <style type="text/css">
+            @media screen and (orientation:portrait) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+            @media screen and (orientation:landscape) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+        </style>
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+	</head>
+	<body>
+    <div class="contain-temp">
+        <div class="contain-temp">
+            <input type="date" id="from" />&nbsp;&nbsp;<input type="date" id="to" />&nbsp;&nbsp;<button id="store" >载入</button>
+        </div>
+        <div id="main" style="min-width: 310px; height: 400px; margin: 0 auto;" class="contain-temp"></div>
+        <div class="contain-temp">
+            <a href="temp.html">返回</a>
+        </div>
+        <script src="../js/echarts-s.js"></script>
+        <script src="js/dateFormat.js"></script>
+        <script type="text/javascript">
+            require.config({
+                paths: {
+                    echarts: '../js'
+                }
+            });
+            require(['echarts','echarts/chart/bar','echarts/chart/line','echarts/chart/config'],function (ec) {
+                        var TempModel = function(){
+                            var me = this;
+                            this.chart = null;
+                            this.xdata = [];
+                            this.top = [];
+                            this.button = [];
+                            this.ary = [];
+                            this.getData = function(isnow,time){
+                                $.when($.getJSON('/wx/service/echart/realtime.json?t='+Math.random()+'&isnow='+isnow+'&time='+time).done(function(data){
+                                    if(data.state == 1){
+                                        var now = data.time;
+                                        if(isnow == 1){
+                                            me.xdata = [];me.ary = [];
+                                            for(var i = 0;i < data.xdata.length;i++){
+                                                me.xdata.push(getFormatDate(new Date(data.xdata[i]),'mm:ss'));
+                                            }
+                                            me.ary = data.ary;me.botton = data.botton;me.top = data.top;
+                                            me.option.series[0].data = me.ary;
+                                            me.option.series[1].data = me.botton;
+                                            me.option.series[2].data = me.top;
+                                            me.option.xAxis[0].data = me.xdata;
+                                            me.render();
+                                        }else{
+                                            me.chart.addData(0,data.position.y,false,false,getFormatDate(new Date(data.position.x),'mm:ss'));
+//                                            me.chart.addData(1,data.bottonVal,false,false,getFormatDate(new Date(data.position.x),'mm:ss'));
+//                                            me.chart.addData(2,data.topVal,false,false,getFormatDate(new Date(data.position.x),'mm:ss'));
+                                        }
+
+                                        setTimeout(function(){
+                                            me.getData(0,now);
+                                        },10000);
+
+                                    }
+                                }).fail(function(error){
+                                    console.log(error);
+                                }));
+                            };
+                            this.render = function(){
+                                //--- 折柱 ---
+                                me.chart = ec.init(document.getElementById('main'));
+                                me.chart.setOption(me.option);
+                                window.onresize = me.chart.resize;
+                            };
+                            this.init = function(){
+
+                            };
+                            this.option = {
+                                title : {
+                                    text: '实时监测'
+                                },
+                                tooltip : {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                    data:['实时温度']
+                                },
+                                toolbox: {
+                                    show : true,
+                                    feature : {
+                                        magicType : {show: true, type: ['line', 'bar']},
+                                        saveAsImage : {show: true}
+                                    }
+                                },
+                                calculable : true,
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        boundaryGap : false,
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        data:me.xdata
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value',
+                                        scale: true,
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        name : '温度(°C)',
+                                        boundaryGap: [0.2, 0.2],
+                                        axisLabel:{
+                                            formatter : function(val){
+                                                return val + '°C';
+                                            }
+                                        }
+                                    }
+                                ],
+                                series : [
+                                    {symbol:'none',name:'实时温度',type:'line',data:me.ary},
+                                    {symbol:'none',name:'下限',type:'line',data:me.botton,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(255,255,255,1)',type: 'default'}}}},
+                                    {symbol:'none',name:'上限',type:'line',data:me.top,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(101,206,167,0.5)',type: 'default'}}}}
+                                ]
+                            };
+                        }
+                        var temp = new TempModel();
+                        temp.init();
+                        $(document).ready(function(){
+                            temp.getData(1,0);
+                            $('#store').click(function(){
+                                temp.loadData();
+                            });
+                        });
+
+                    }
+            );
+
+
+
+
+
+
+        </script>
+    </div>
+	</body>
+</html>

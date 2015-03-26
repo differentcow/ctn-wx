@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <title>温度</title>
+        <style type="text/css">
+            @media screen and (orientation:portrait) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+            @media screen and (orientation:landscape) {
+                .contain-temp {
+                    -webkit-box-flex: 1;width: 100%;
+                }
+            }
+        </style>
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+	</head>
+	<body style="background-color: #ffffff;">
+    <div class="contain-temp">
+        <div id="main" style="height: 400px;width: 100%;" class="contain-temp"></div>
+        <!--<div id="main2" style="height:400px"></div>-->
+        <div class="contain-temp">
+            <a href="temp.html">返回</a>
+            <input type="hidden" id="mark" value="Y" />
+        </div>
+        <script src="js/dateFormat.js"></script>
+        <script src="../js/echarts-s.js"></script>
+        <script type="text/javascript">
+            var one_day = 1000 * 60 * 60 * 24;
+            require.config({
+                paths: {
+                    echarts: '../js'
+                }
+            });
+            require(['echarts','echarts/chart/bar','echarts/chart/line','echarts/chart/config'],function (ec) {
+                        var TempModel = function(){
+                            var me = this;
+                            this.chart = null;
+                            this.xdata = [];
+                            this.max = [];
+                            this.real = [];
+                            this.store = [0];
+                            this.top = [];
+                            this.botton = [];
+                            this.storeCount = [];
+                            this.storeloop = function(data,isAdd){
+                              if(isAdd){
+                                  var ary = me.storeCount;
+                                  if(ary.length > 0){
+                                      me.option.series[0].data.splice(0,ary.length);
+                                      me.option.series[1].data.splice(0,ary.length);
+                                      for(var k = 0;k < data.length;k++){
+                                          me.option.series[0].data.push(data[k].y);
+                                      }
+                                      for(var i = 0;i < ary.length;i++){
+                                          me.option.series[1].data.push(ary[i]);
+                                      }
+//                                      me.chart.setOption(me.option);
+                                      me.storeCount = [];
+                                  }
+                              }else{
+                                  for(var i = 0;i < data.length;i++){
+                                      me.option.series[0].data.push(data[i].y);
+                                  }
+                                  me.chart.setOption(me.option);
+                              }
+                            };
+                            this.flag = false;
+                            this.loadData = function(isFirst){
+                                $.when($.getJSON("/wx/service/echart/store.json?t="+Math.random()+'&load=y')).done(function(data){
+                                    if(data.state == 1){
+                                        if(isFirst){
+                                            me.storeloop(data.ary,false);
+                                            me.flag = false;
+                                        }else{
+                                            me.storeloop(data.ary,true);
+                                        }
+                                    }
+                                    setTimeout(function(){me.loadData(me.flag);},4000);
+                                }).fail(function(error){
+                                    console.log(error);
+                                });
+                            };
+                            this.getData = function(isFirst){
+                                $.when($.getJSON("/wx/service/echart/train.json?t="+Math.random()+'&isFirst='+isFirst).done(function(data){
+                                    if(data.state == 1){
+                                        if(isFirst == 1){
+                                            me.xdata = [];me.real = [];me.top = [];me.botton = [];me.store = [];
+                                            for(var i = 0;i < data.xdata.length;i++){
+                                                me.xdata.push(getFormatDate(new Date(data.xdata[i]),'hh:mm:ss'));
+                                            }
+                                            me.real = data.real;me.top = data.top;me.botton = data.botton;
+                                            me.option.series[1].data = me.real;
+                                            me.option.series[2].data = me.botton;
+                                            me.option.series[3].data = me.top;
+                                            me.option.xAxis[0].data = me.xdata;
+                                            me.option.series[0].data = me.store;
+                                            me.render();
+                                            me.loadData(true);
+                                        }else{
+                                            if(me.storeCount.length == 0){
+                                                me.chart.setOption(me.option);
+                                            }
+                                            me.chart.addData(1,data.position.y,false,false,getFormatDate(new Date(data.position.x),'hh:mm:ss'));
+                                            me.storeCount.push(data.position.y);
+                                            me.chart.addData(0,'-',false,false,getFormatDate(new Date(data.position.x),'hh:mm:ss'));
+                                        }
+                                        setTimeout(function(){me.getData('');},10000);
+                                    }
+                                }).fail(function(error){
+                                    console.log(error);
+                                }));
+                            };
+                            this.render = function(){
+                                //--- 折柱 ---
+                                me.chart = ec.init(document.getElementById('main'));
+                                me.chart.setOption(me.option);
+                                window.onresize = me.chart.resize;
+                            };
+                            this.option = {
+                                title : {
+                                    text: '温度统计'
+                                },
+                                tooltip : {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                    data:['实时温度','存储温度']
+                                },
+                                /*toolbox: {
+                                    show : true,
+                                    feature : {
+                                        magicType : {show: true, type: ['line', 'bar']},
+                                        saveAsImage : {show: true}
+                                    }
+                                },*/
+                                calculable : true,
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        boundaryGap : false,
+                                        data:me.xdata
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value',
+                                        scale: true,
+                                        splitArea : {show:false},
+                                        splitLine : {show:false},
+                                        name : '实时/存储温度',
+                                        boundaryGap: [0.2, 0.2],
+                                        axisLabel:{
+                                            formatter : function(val){
+                                                return val + '°C';
+                                            }
+                                        }
+                                    }
+                                ],
+                                series : [
+                                    {
+                                        name:'存储温度',
+                                        type:'line',
+                                        symbol:'none',
+                                        itemStyle: {normal: {lineStyle:{color:'#000000'}}},
+                                        data:me.store
+                                    },
+                                    {/*symbol:'none',*/name:'实时温度',type:'line',data:me.real,xAxisIndex:0,yAxisIndex:0},
+                                    {symbol:'none',name:'下限',type:'line',data:me.botton,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(255,255,255,1)',type: 'default'}}}},
+                                    {symbol:'none',name:'上限',type:'line',data:me.top,itemStyle: {normal: {lineStyle:{color:'rgba(101,206,167,0.5)'},areaStyle: {color:'rgba(101,206,167,0.5)',type: 'default'}}}}
+                                ]
+                            };
+                        }
+                        var temp = new TempModel();
+                        $(document).ready(function(){
+                            temp.getData('1');
+                            $('#store').click(function(){
+                                temp.loadData();
+                            });
+
+                        });
+
+                    }
+            );
+        </script>
+    </div>
+	</body>
+</html>
