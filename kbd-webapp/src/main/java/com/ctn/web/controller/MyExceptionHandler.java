@@ -3,11 +3,11 @@
  */
 package com.ctn.web.controller;
 
-import java.util.logging.Logger;
-
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.logging.Logger;
 
 /**
  * @author Zale
@@ -19,6 +19,7 @@ public class MyExceptionHandler {
 	 @ExceptionHandler(value = { Exception.class, Throwable.class })
 	    @ResponseBody
 	    public Object handleException(Exception ex) {
+         ex.printStackTrace();
 	        logger.warning(ex.getMessage());
 	       
 	        return ex.getMessage();

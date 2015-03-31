@@ -9,6 +9,12 @@
         <!-- 新 Bootstrap 核心 CSS 文件 -->
         <link rel="stylesheet" href="../css/bootstrap.min.css">
         <!--end copy-->
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="../js/jquery-1.11.1.min.js"></script>
+        <script src="../js/knockout-3.1.0.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="../js/bootstrap.min.js"></script>
+
 	</head>
 	<body>
     <div class="container-fluid">
@@ -22,7 +28,7 @@
                 <thead>
                     <tr>
                         <td><h4>编号</h4></td>
-                        <td align="center"><h4>颜色</h4></td>
+                        <td><h4>ESL</h4></td>
                         <td><h4>温度</h4></td>
                         <td><h4>湿度</h4></td>
                         <td><h4>光强度</h4></td>
@@ -33,14 +39,16 @@
                 <tbody data-bind="foreach:list">
                     <tr>
                         <td><h1><span data-bind="text:$data.temp_code"></span></h1></td>
-                        <td align="center"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:80px;width:80px;border-radius:5px;">&nbsp;</div></td>
+                        <!--<td align="center" data-bind="attr:{id:$data.id+'_esl'}"><div data-bind="style:{backgroundColor:$data.color},attr:{id:$data.id}" style="height:80px;width:80px;border-radius:5px;">&nbsp;</div></td>-->
+                        <td><h1><span data-bind="text:$data.eslName,attr:{id:'esl_'+$data.id,tag:$data.esl_id}"></span></h1></td>
                         <td><h1><span data-bind="text:$data.celsius,attr:{id:'celsius_'+$data.id}"></span></h1></td>
                         <td><h1><span data-bind="text:$data.humidity,attr:{id:'humidity_'+$data.id}"></span></h1></td>
                         <td><h1><span data-bind="text:$data.light,attr:{id:'light_'+$data.id}"></span></h1></td>
                         <td><h1><span data-bind="text:$data.electric,attr:{id:'electric_'+$data.id}"></span></h1></td>
                         <td>
-                            <h1><!--<a href="#" data-bind="click:function(){$root.forwardDetail($data.id);}">详细</a>&nbsp;
-                            &nbsp;--><a href="#" data-bind="click:function(){$root.qrCode($data.id,$data.temp_code);}">二维码</a></h1>
+                            <h1><a href="#" data-bind="click:function(){$root.qrCode($data.id,$data.temp_code);}">二维码</a>&nbsp;
+                                <a href="#" data-bind="click:function(){$root.eslModal($data.id);}">ESL</a>
+                            </h1>
                         </td>
                     </tr>
                 </tbody>
@@ -66,19 +74,112 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+    <div class="modal fade" id="selModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 250px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">ESL选择</h4>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <table style="margin: auto;">
+                        <tr>
+                            <td colspan="2">
+                                <span id="error_msg" style="color: red;display: none;"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>ESL：</strong>
+                            </td>
+                            <td>
+                                <select name="hour" id="eslSel"
+                                        data-bind="value:eslId,options:eslOptions,optionsText:'name',optionsValue:'id'"></select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="clear" class="btn btn-default" >清空</button>
+                    <button type="button" id="sure" class="btn btn-default" >确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 	</body>
-    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-    <script src="../js/jquery-1.11.1.min.js"></script>
-    <script src="../js/knockout-3.1.0.js"></script>
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="../js/bootstrap.min.js"></script>
     <script type="text/javascript">
         function TemperatureModel() {
             var me = this;
             this.list = ko.observableArray([]);
+            this.eslOptions = ko.observableArray([]);
+            this.eslId = ko.observable();
             this.first_time = ko.observable(true);
             this.init = function(){
-               me.getList();
+                me.getEsl();
+                me.getList();
+                $('#clear').click(function(){
+                    me.uptEsl(1);
+                });
+                $('#sure').click(function(){
+                    me.uptEsl(2);
+                });
+            };
+            this.getEsl = function(){
+                $.when($.getJSON("/wx/service/esl/lst.json?t="+Math.random()+'&isCustomer=0')).done(function(data){
+                    if(data.state == 1){
+                        me.eslOptions([]);
+                        me.eslOptions(data.data);
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
+            };
+            this.tempStoreId = ko.observable();
+            this.eslModal = function(id){
+                me.tempStoreId(id);
+                $('#error_msg').hide();
+                $('#selModal').modal('toggle');
+            };
+            this.uptEsl = function(type){
+                var obj = {id:me.tempStoreId()};
+                if(type==2){
+                    obj.eslId = me.eslId();
+                    var flag = false;
+                    $('span[id*=esl_]').each(function(){
+                        var tag = $(this).attr('tag');
+                        if(typeof tag != 'undefined' && tag == me.eslId()){
+                            flag = true;
+                            return;
+                        }
+                    });
+                    if(flag){
+                        $('#error_msg').text('已有温度计与此ESL关联.').show();
+                        return;
+                    }
+
+                }
+                $.when($.ajax({
+                    url: "/wx/service/temperature/esl/upt.json",
+                    type: "PUT",
+                    data:JSON.stringify(obj),
+                    contentType : 'application/json'
+                })).done(function(data){
+                    if(data.state == 1){
+                        if(type == 1){
+                            $('#esl_'+me.tempStoreId()).removeAttr('tag');
+                            $('#esl_'+me.tempStoreId()).text('');
+                        }else{
+                            var name = $('option[value='+me.eslId()+']').text();
+                            $('#esl_'+me.tempStoreId()).text(name);
+                            $('#esl_'+me.tempStoreId()).attr('tag',me.eslId());
+                            me.eslId(1);
+                        }
+                        $('#selModal').modal('toggle');
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
             };
             this.forwardDetail = function(id){
                 window.location.href="temp.html?id="+id;

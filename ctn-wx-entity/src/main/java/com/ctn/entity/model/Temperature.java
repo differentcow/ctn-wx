@@ -16,6 +16,24 @@ public class Temperature {
     private String light;
     private String celsius;
     private String electric;
+    private String temp_name;
+    private Integer esl_id;
+
+    public Integer getEsl_id() {
+        return esl_id;
+    }
+
+    public void setEsl_id(Integer esl_id) {
+        this.esl_id = esl_id;
+    }
+
+    public String getTemp_name() {
+        return temp_name;
+    }
+
+    public void setTemp_name(String temp_name) {
+        this.temp_name = temp_name;
+    }
 
     public String getColor() {
         return color;

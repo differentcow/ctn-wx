@@ -1,6 +1,12 @@
 package com.ctn.web.controller;
 
+import com.ctn.entity.model.Esl;
+import com.ctn.entity.query.GenericQueryParam;
+import com.ctn.entity.query.QueryKey;
+import com.ctn.entity.query.SortCond;
+import com.ctn.service.esl.EslService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +36,21 @@ import java.util.Map;
 @RequestMapping("/esl")
 public class ESLController {
 
+    @Autowired
+    private EslService<Esl> srv;
+
+    @RequestMapping(value = "/lst", method = RequestMethod.GET)
+    public Object getEsl(@RequestParam(value = "isCustomer",required = false)Integer isCustomer,
+                                  HttpServletRequest request,HttpServletResponse response){
+        GenericQueryParam param = new GenericQueryParam();
+        param.put(new QueryKey("isCustomer", QueryKey.Operators.EQ),isCustomer);
+        param.addSortCond(new SortCond("name", SortCond.Order.ASC));
+        java.util.List<Esl> list = srv.findAll(param);
+        Map map =  new HashMap();
+        map.put("state",1);
+        map.put("data",list);
+        return map;
+    }
 
     @RequestMapping(value = "/show", method = RequestMethod.GET)
     public Object showTemperature(@RequestParam(value = "id",required = false)Integer id,

@@ -4,4 +4,21 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 <mapper namespace="com.ctn.dao.TemperatureDao">
+
+    <select id="getList" resultType="TemperatureRsp">
+        select t.*,e.name as eslName from temperature t left join esl e on e.id = t.esl_id
+        order by t.update_time desc
+    </select>
+
+    <update id="updateEsl">
+        update temperature set
+        <if test="esl == null">
+            esl_id = null
+        </if>
+        <if test="esl != null">
+            esl_id = #{esl}
+        </if>
+        where id = #{id}
+    </update>
+
 </mapper>

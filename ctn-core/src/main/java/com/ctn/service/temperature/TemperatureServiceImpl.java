@@ -1,10 +1,12 @@
 package com.ctn.service.temperature;
 
+import com.ctn.dao.TemperatureDao;
 import com.ctn.entity.model.Temperature;
 import com.ctn.entity.query.GenericQueryParam;
 import com.ctn.entity.query.QueryKey;
-import com.ctn.entity.query.SortCond;
+import com.ctn.entity.response.TemperatureRsp;
 import com.ctn.service.BaseServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +19,18 @@ import java.util.List;
 @Service
 public class TemperatureServiceImpl extends BaseServiceImpl<Temperature> implements TemperatureService<Temperature> {
 
+    @Autowired
+    private TemperatureDao dao;
 
-    public List<Temperature> getAll(){
-        GenericQueryParam param = new GenericQueryParam();
-        param.addSortCond(new SortCond("update_time", SortCond.Order.DESC));
-        return this.findAll(param);
+    public List<TemperatureRsp> getAll(){
+//        GenericQueryParam param = new GenericQueryParam();
+//        param.addSortCond(new SortCond("update_time", SortCond.Order.DESC));
+        return dao.getList();
+    }
+
+
+    public boolean updateEsl(Integer esl_id,Integer id){
+        return dao.updateEsl(esl_id,id) > 0;
     }
 
     @Transactional

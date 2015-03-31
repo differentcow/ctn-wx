@@ -1,6 +1,7 @@
 package com.ctn.web.controller.temp;
 
 import com.ctn.entity.model.Temperature;
+import com.ctn.entity.response.TemperatureRsp;
 import com.ctn.service.temperature.TemperatureService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class TempController {
     public Object list(HttpServletRequest request,HttpServletResponse response){
         try {
             System.out.println("获取数据");
-            List<Temperature> temps = tempService.getAll();
+            List<TemperatureRsp> temps = tempService.getAll();
             if (!temps.isEmpty()){
                 map.put("state",1);
                 map.put("array",temps);
@@ -51,6 +52,19 @@ public class TempController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return map;
+    }
+
+    @RequestMapping(value = "/esl/upt", method = RequestMethod.PUT)
+    public Object uptESL(@RequestBody Map<String,Integer> value){
+        Integer id = value.get("id");
+        Integer eslId = value.get("eslId");
+        Map map = new HashMap();
+        if(tempService.updateEsl(eslId,id)){
+            map.put("state",1);
+        }else{
+            map.put("state",0);
         }
         return map;
     }
@@ -76,7 +90,7 @@ public class TempController {
     @RequestMapping(value = "/xy/upt", method = RequestMethod.PUT)
     public Object uptXY(@RequestBody Map<String,Integer> value){
         try {
-        if (tempService.updateXY(value.get("x"), value.get("y"), value.get("id"))){
+        if (tempService.updateXY(value.get("x"),value.get("y"),value.get("id"))){
             mapXY.put("state",1);
             return mapXY;
         }

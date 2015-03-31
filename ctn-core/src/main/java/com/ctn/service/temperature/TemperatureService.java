@@ -1,6 +1,6 @@
 package com.ctn.service.temperature;
 
-import com.ctn.entity.model.Temperature;
+import com.ctn.entity.response.TemperatureRsp;
 import com.ctn.service.BaseService;
 
 import java.util.List;
@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface TemperatureService<T> extends BaseService<T> {
 
-    List<Temperature> getAll();
+    List<TemperatureRsp> getAll();
+
+    boolean updateEsl(Integer esl_id, Integer id);
 
     boolean updateColor(String color, Integer id);
 
