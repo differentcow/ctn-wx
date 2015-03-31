@@ -10,14 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,7 +57,10 @@ public class ESLController {
                 if (name.lastIndexOf(".") != -1){
                     type = name.substring(name.lastIndexOf(".")+1,name.length());
                 }
-                cutImage(file.getInputStream(),"C:/Users/hp/Desktop/GitHub/"+System.currentTimeMillis()+".bmp",new BigDecimal(x1).intValue(),new BigDecimal(y1).intValue(),w,h,type);
+                byte[] test = cutImage(file.getInputStream(),"C:/Users/hp/Desktop/GitHub/"+System.currentTimeMillis()+".bmp",new BigDecimal(x1).intValue(),new BigDecimal(y1).intValue(),w,h,type);
+                for (byte t : test){
+                    System.out.print(" "+t);
+                }
             }
             System.out.println(content);
             map.put("status","ok");
@@ -74,7 +76,7 @@ public class ESLController {
         return map;
     }
 
-    public static void cutImage(InputStream src,String dest,int x,int y,int w,int h,String type) throws IOException{
+    private byte[] cutImage(InputStream src,String dest,int x,int y,int w,int h,String type) throws IOException{
         Iterator iterator = ImageIO.getImageReadersByFormatName(type.toLowerCase());
         ImageReader reader = (ImageReader)iterator.next();
         ImageInputStream iis = ImageIO.createImageInputStream(src);
@@ -87,7 +89,33 @@ public class ESLController {
         Graphics g = bmp.getGraphics();
         g.drawImage(bi, 0, 0, null);
         g.dispose();
-        ImageIO.write(bmp, "BMP", new File(dest));
+        File des = new File(dest);
+        ImageIO.write(bmp, "BMP", des);
+        return image2byte(des);
+    }
+
+    private byte[] image2byte(File file){
+        byte[] data = null;
+        FileImageInputStream input = null;
+        try {
+            input = new FileImageInputStream(file);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int numBytesRead = 0;
+            while ((numBytesRead = input.read(buf)) != -1) {
+                output.write(buf, 0, numBytesRead);
+            }
+            data = output.toByteArray();
+            output.close();
+            input.close();
+        }
+        catch (FileNotFoundException ex1) {
+            ex1.printStackTrace();
+        }
+        catch (IOException ex1) {
+            ex1.printStackTrace();
+        }
+        return data;
     }
 
 }
