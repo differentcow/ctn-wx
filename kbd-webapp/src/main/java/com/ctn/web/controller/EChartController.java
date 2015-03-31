@@ -39,8 +39,6 @@ public class EChartController {
         List<Integer> avg = new ArrayList<Integer>();
         List<Integer> top = new ArrayList<Integer>();
         List<Integer> botton = new ArrayList<Integer>();
-        long toX = 0L;
-        long fromX = 0L;
         for (long i = from;cnt < 48;cnt++){
             xdata.add(i);
             top.add(18);
@@ -54,20 +52,12 @@ public class EChartController {
             m2.put("real",i-fifMin);
             min.add(m2);
             avg.add(flag?TestArrayData.avg[cnt]+2:TestArrayData.avg[cnt]);
-            if(cnt == 47){
-                toX = i;
-            }
-            if(cnt == 0){
-                fromX = i;
-            }
             i += halfhour;
         }
         map.put("xdata",xdata);
         map.put("avg",avg);
-        map.put("toX",toX);
         map.put("top",top);
         map.put("botton",botton);
-        map.put("fromX",fromX);
         map.put("max",max);
         map.put("min",min);
         map.put("state",1);

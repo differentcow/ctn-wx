@@ -50,6 +50,31 @@
                 $(self).removeClass('info');
             }
         };
+        this.storeId = ko.observable();
+        this.showEsl = function(el){
+            var val = parent.document.getElementById('mark_xy');
+//            alert(val);
+            if(typeof val != 'undefined' && val != null && val.value == 'E'){
+                $.when($.getJSON("/wx/service/esl/show.json?t="+Math.random()+'&id='+$(el).attr('id'))).done(function(data){
+                    if(data.state == 1){
+                        $('div[tag=temperature]').each(function(){
+                            $(this).css('-webkit-filter','contrast(1)');
+                        });
+                        $(el).css('-webkit-filter','contrast(2)');
+                        var self = parent.document.getElementById($(el).attr('id'));
+                        if(typeof self != 'undefined'){
+                            if(typeof me.storeId() != 'undefined'){
+                                $(me.storeId()).css('color','rgb(0,0,0)');
+                            }
+                            $(self).css('color','rgb(249,177,59)');
+                            me.storeId(self);
+                        }
+                    }
+                }).fail(function(error){
+                    console.log(error);
+                });
+            }
+        };
         this.getList = function(){
             $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
                 if(data.state == 1){
@@ -64,6 +89,8 @@
                             me.mouseOverEvent(this);
                         }).mouseout(function(){
                             me.mouseOutEvent(this);
+                        }).click(function(){
+                            me.showEsl(this);
                         });
 //                        me.intervalGetList();
                     }

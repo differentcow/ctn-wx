@@ -17,6 +17,7 @@
                 <h1>温度计展示</h1>
             </div>
             <input type="hidden" id="mark_touch" value="Y" />
+            <input type="hidden" id="mark_xy" value="E" />
         </div>
         <div class="row">
             <div class="col-sm-offset-2 col-lg-offset-2 col-md-offset-2 col-md-5 col-lg-5 col-sm-5">
@@ -30,14 +31,14 @@
             <div class="col-md-3 col-lg-3 col-sm-3">
                 <table class="table">
                     <tbody data-bind="foreach:list">
-                    <tr data-bind="attr:{id:$data.id}">
+                    <tr data-bind="attr:{id:$data.id}" style="color: rgb(0,0,0);height: 40px;">
                         <td data-bind="text:$data.temp_code"></td>
                         <td align="center"><div data-bind="style:{backgroundColor:$data.color}" style="height:20px;width:20px;border-radius:5px;">&nbsp;</div></td>
                         <td>
-                            <span data-bind="text:$data.celsius"></span><span>(&#176;C)</span>&nbsp;&nbsp;
-                            <span data-bind="text:$data.humidity"></span><span>(%rh)</span>&nbsp;&nbsp;
-                            <span data-bind="text:$data.light"></span><span>(nt)</span>&nbsp;&nbsp;
-                            <span data-bind="text:$data.electric"></span><span>(V)</span>
+                            <span data-bind="text:$data.celsius,attr:{id:'celsius_'+$data.id}"></span><span>(&#176;C)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.humidity,attr:{id:'humidity_'+$data.id}"></span><span>(%rh)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.light,attr:{id:'light_'+$data.id}"></span><span>(nt)</span>&nbsp;&nbsp;
+                            <span data-bind="text:$data.electric,attr:{id:'electric_'+$data.id}"></span><span>(V)</span>
                         </td>
                     </tr>
                     </tbody>
@@ -54,6 +55,7 @@
     <script type="text/javascript">
         function TemperatureModel() {
             var me = this;
+            this.first_time = ko.observable(true);
             this.list = ko.observableArray([]);
             this.mapPath = ko.observable('');
             this.init = function(){
@@ -63,8 +65,21 @@
             this.getList = function(){
                 $.when($.getJSON("/wx/service/temperature/list.json?t="+Math.random())).done(function(data){
                     if(data.state == 1){
-                        me.list([]);
-                        me.list(data.array);
+                        if(me.first_time()){
+                            me.first_time(false);
+                            me.list([]);
+                            me.list(data.array);
+                        }else{
+                            for(var i = 0;i < data.array.length;i++){
+                                for(var k in data.array[i]){
+                                    if(k == 'celsius' || k == 'electric' || k == 'humidity' || k == 'light'){
+                                        $('#'+k+'_'+data.array[i].id).fadeToggle('slow');
+                                        $('#'+k+'_'+data.array[i].id).text(data.array[i][k]);
+                                        $('#'+k+'_'+data.array[i].id).fadeToggle('slow');
+                                    }
+                                }
+                            }
+                        }
                     }
                     setTimeout(function(){me.getList();},5000);
                 }).fail(function(error){

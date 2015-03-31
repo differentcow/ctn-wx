@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" >
+    <head>
+        <meta charset="utf-8" />
+        <meta name="author" content="Script Tutorials" />
+        <title>展示</title>
+
+        <!-- add styles -->
+        <link href="css/main.css" rel="stylesheet" type="text/css" />
+        <link href="css/jquery.Jcrop.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- add scripts -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.Jcrop.min.js"></script>
+        <script src="js/script.js"></script>
+        <script src="js/ajaxfileupload.js"></script>
+    </head>
+    <body>
+        <div class="demo">
+            <div class="bheader"><h2>ESL自定义内容展示</h2></div>
+            <div class="bbody" style="border: solid 1px #000000;">
+                <!-- upload form -->
+                <form id="upload_form" enctype="multipart/form-data" method="post" action="/wx/service/esl/content.json" onSubmit="return checkForm()">
+                    <!-- hidden crop params -->
+                    <input type="hidden" id="x1" name="x1" value="0"/>
+                    <input type="hidden" id="y1" name="y1" value="0"/>
+                    <input type="hidden" id="x2" name="x2" value="72"/>
+                    <input type="hidden" id="y2" name="y2" value="72"/>
+                    <input type="hidden" id="w" name="w" value="72"/>
+                    <input type="hidden" id="h" name="h" value="72"/>
+                    <input type="hidden" id="filedim" name="filedim" />
+                    <input type="hidden" id="filetype" name="filetype" />
+                    <input type="hidden" id="filesize" name="filesize" />
+                    <table style="width: 500px;margin: auto;">
+                        <tr>
+                            <td colspan="2"><div class="error"></div>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <img id="preview" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td width="50%" align="right">
+                                <strong>选择图片：</strong>
+                            </td>
+                            <td align="left">
+                                <input type="file" name="uploadImg" id="image_file" onChange="fileSelectHandler()" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%" align="right">
+                                <strong>显示的内容：</strong>
+                            </td>
+                            <td>
+                                <input type="text" name="content"style="width: 100%;" maxlength="20"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <input type="button" id="upload" value="提交" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function(){
+           $('#upload').click(function(){
+               var reg = /^[a-zA-Z0-9]{1,}$/;
+               var content = $('input[name=content]').val();
+               var temp = content.replace(/\s+/g,"", "");
+               if(!temp.match(reg)){
+                   $('.error').text('Content must be English or Number.').show();
+                   return;
+               }
+               $('.error').hide();
+               var url = '/wx/service/esl/content.json';
+               url += '?x1='+$('#x1').val()+'&y1='+$('#y1').val()+'&w='+$('#w').val()+'&h='+$('#h').val()+'&content='+$('input[name=content]').val();
+               $.ajaxFileUpload({
+                   url: url,
+                   secureuri:false,
+                   fileElementId:'image_file',
+                   dataType: 'json',
+                   success: function(data,status){
+                       if(typeof  jcrop_api != 'undefined'){
+                           jcrop_api.destroy();
+                       }
+                       $('#preview').css({width:'0px',height:'0px'});
+                       alert('ok');
+                   },
+                   error: function(data, status, e){
+                       alert('failed');
+                   }
+               });
+           });
+        });
+    </script>
+</html>
