@@ -17,10 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -43,7 +46,23 @@ public class BaseController {
     private String developer;
     @Value("${server.address}")
     private String serverUrl;
+    @Value("${admin.account}")
+    private String admin;
+    @Value("${user.account}")
+    private String user;
 
+    private Map<String,Integer> map;
+
+    @PostConstruct
+    public void init(){
+        map = new HashMap<String,Integer>();
+        if(org.apache.commons.lang.StringUtils.isNotBlank(user)){
+            map.put(user,0);
+        }
+        if(org.apache.commons.lang.StringUtils.isNotBlank(admin)){
+            map.put(admin,1);
+        }
+    }
 
 	@RequestMapping(value = "/chat", method = RequestMethod.GET)
 	public Object checkToken(HttpServletRequest req,
@@ -106,6 +125,7 @@ public class BaseController {
             try {
                 request.setAttribute("developer",developer);
                 request.setAttribute("serverUrl",serverUrl);
+                request.setAttribute("authMap",map);
                 HandlerMapping mapping = handlerBeanManager.getHandlerMapping();
                 HandlerBean bean = mapping.getHandlerBean(msg.getEvent(),msg.getMsgType());
                 Method method = bean.getClazz().getMethod(bean.getMethodName(), HttpServletRequest.class,

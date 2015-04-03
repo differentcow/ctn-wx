@@ -28,7 +28,7 @@ public class BaseCoreController {
 	
 	@Autowired
 	private AccessTokenCache accessTokenCache;
-	@Autowired
+//	@Autowired
 	private GetAccessTokenTask getAccessTokenTask;
 	@Value("${wechat.token}")
 	private String token;
