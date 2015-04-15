@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta content="telephone=no" name="format-detection" />
+  <title></title>
+
+  <!--<link href="css/consult.css"/>-->
+   <style>
+       /* latin-ext */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Lato Regular'), local('Lato-Regular'), url(http://fonts.gstatic.com/s/lato/v11/UyBMtLsHKBKXelqf4x7VRQ.woff2) format('woff2');
+           unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Lato Regular'), local('Lato-Regular'), url(http://fonts.gstatic.com/s/lato/v11/1YwB1sO8YE1Lyjf12WNiUA.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       /* latin-ext */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 900;
+           src: local('Lato Black'), local('Lato-Black'), url(http://fonts.gstatic.com/s/lato/v11/R4a6fty3waPci7C44H8AjvY6323mHUZFJMgTvxaG2iE.woff2) format('woff2');
+           unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 900;
+           src: local('Lato Black'), local('Lato-Black'), url(http://fonts.gstatic.com/s/lato/v11/tI4j516nok_GrVf4dhunkg.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Montez';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Montez'), local('Montez-Regular'), url(http://fonts.gstatic.com/s/montez/v6/aq8el3-0osHIcFK6bXAPkw.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       .sparkley {
+           background: #3e5771;
+           color: white;
+           border: none;
+           padding: 16px 36px;
+           font-weight: normal;
+           font-size: 1.2em;
+           border-radius: 3px;
+           transition: all 0.25s ease;
+           /*box-shadow: 0 38px 32px -23px black;*/
+           /*margin: 0 1em 1em;*/
+       }
+       /*.sparkley:hover {
+           background: #2c3e50;
+           color: rgba(255, 255, 255, 0.2);
+       }*/
+
+       html {
+           font-family: Lato;
+           font-weight: 200;
+           font-size: 1em;
+           text-align: center;
+           color: #ddd;
+           min-height: 100%;
+           background: #092756;
+           background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -webkit-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -o-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -o-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -o-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -ms-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -ms-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), linear-gradient(to bottom, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), linear-gradient(135deg, #670d10 0%, #092756 100%);
+       }
+       html body {
+           padding: 10px;
+       }
+
+       h1 span, h2 span, h3 span {
+           font-family: Montez;
+           font-size: 1.9em;
+           font-weight: 300;
+           margin: 0 0.3em;
+           color: #ff0080;
+       }
+
+       h1 {
+           font-size: 1.9em;
+           width: 100%;
+           margin: 0 auto 1em;
+           text-shadow: 0 2px 1px black;
+       }
+
+       .img {
+           /*margin: 40px auto 0;*/
+           /*width: 500px;*/
+           display: block;
+       }
+       .img img {
+           width: 100%;
+           border-radius: 5px;
+       }
+
+       p {
+           padding: 5px 10px;
+           display: inline-block;
+           margin: 10px auto;
+       }
+   </style>
+  <!--<script src="js/prefixfree.min.js"></script>-->
+  <!--<script src="js/modernizr.js"></script>-->
+</head>
+
+<body>
+
+<h1><span>Trouble</span> House!</h1>
+<h3>I am B+, I will always be with you.</h3>
+<div class="img">
+  <img id="image" src="img/Rain-l.png">
+</div>
+  <p>拥抱烦恼吧，因为我就在你的身旁</p>
+  <input type="hidden" id="store_user"/>
+  <div class="sparkley" style="text-align: left;" id="content">
+      致Joanna:
+      <br><br>
+      Hi，我弄的这个页面好看么？我觉得挺不错呢，哈哈，给我赞一个呗！这几天看你没什么精神呢？整天的唉声叹气，容易变老哦~~~<br><br>
+      愚人节那天，你大概发生了些事情，心情不大好。不清楚那天你发生了什么事情，但看到你那天的样子，有点心酸（好吧，其实是想起我那坑爹的以往），可能觉得与我的经历有些
+      相似，所以很想帮你一把。<br><br>
+      其实，你这个人很好聊天，吃饭的时候，基本上你都是顺着我的意思聊天，大概跟你的性格有关。也不知道是好是坏，但总觉得缺乏了自己的一部分（要是能相信我的话，可以跟我诉说下，反正我已经深得某种角色精髓）。<br><br>
+      还有，吃完饭后，在广场上散步。你的步速令我惊讶，我没有精确算过，但是散步那段时间，已经绕着广场走了好几圈了，有时我在想，我的生活节奏已经够快了，但是令我想不到的是，我差点跟不上你，还有几次撞到你了。
+      我想说，你是有焦虑症吗？还是就真的这么不安？一个人的潜意识，实在可怕，穿着高跟鞋都能健步如飞，我实在汗颜，看来我要锻炼一下我的脚力了。<br><br>
+      还记得我问你那两块石凳吗？我问你，要是让你选，是选背着路灯，黑漆漆的石凳，还是对着路灯，亮铮铮的石凳，你几乎是毫不犹豫的就讲背着路灯的那块。我当时懵了，似乎你的不安感还真的不是一般的小。一般人都会选择光亮的石凳，
+      但你没有，而且还解释到，没光照到的石凳，安全。我可以确定，没有经历过一些社会经验的人，不会这么解释，因为一般认为，黑暗是可怕的象征，但是你的解释，应该是怕亮光暴露了你的缺点。其实这已经有点歪曲了。那时我觉得，
+      或者你真的要好好休息一下。<br><br>
+      刚好，明天你出去旅游，散散心。不要再一秒钟拖着高跟鞋走十几步，深呼吸，一步一个脚印，不在乎时间的流动，也不在乎身上的重担，轻轻的踏出一步，盈盈地落在地上。放下工作，生活，感情，合上眼睛，面对大海，
+      静静地倾听海浪声，跟随着海水的柔软，随风而动，感受一下，大海，土地，天空，这个最真实的世界。<br><br>
+      这几天，跟你聊天，都蔓延着一些不好的气氛，我觉得我要做些什么，虽然很可能我什么都做不到，但也算是一片心意。还有，嘻嘻，有什么烦恼事，可以点击这里（<a href="javascript:void(0);" id="click_content_s">click</a>），
+      我的烦恼屋开张了，哈哈，在这里，你可以写出你的烦恼，我会收到哦（我嘴巴可是很紧滴，来吧来吧！！！）<br><br>
+      最后再说一句，多笑笑，眼镜已经没有了，不要连笑容都丢了，来嘛，笑一个啦~~~（其实我是大白，请叫我大白，哈哈哈）<br><br>
+  </div>
+<div style="width: 100%;margin-top: 5px;">
+    <a href="javascript:void(0)" id="click_post" style="color: #ffffff;">如果你有什么烦恼，可以点击这里哦</a>
+</div>
+  <script src='js/jquery-1.11.1.min.js'></script>
+  <!--<script src='js/rbeix.js'></script>-->
+  <!--<script src="js/index.js"></script>-->
+  <script type="text/javascript">
+      $(document).ready(function(){
+          var param = window.location.search;
+          var user = '';
+          if(param.indexOf('?') != -1){
+              user = param.substr(param.indexOf('?'),param.length);
+              $('#store_user').val(user);
+          }
+          $('#click_post,#click_content_s').click(function(){
+              window.location.href = "consultPost.html?user="+user;
+          });
+          /*var deferred = $.getJSON("/wx/service/trouble/view?user="+user);
+          $.when(deferred).done(function (response) {
+              if (response.code == 1) {
+                  $('#content').html(response.data);
+              }
+          }).fail(function (error) {
+              console.log(error);
+          });*/
+      });
+  </script>
+
+
+</body>
+
+</html>
