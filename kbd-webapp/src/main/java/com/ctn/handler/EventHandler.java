@@ -33,9 +33,11 @@ public class EventHandler {
         //Login function
         if(params.length == 2){
             if(map.get(content) == 1){
-                return buildLoginNavi(serverUrl,developer,msg,params[0]);
+                return buildLoginNavi(serverUrl,developer,msg,params[0],"Joanna，能看到吗？进来看看呗，嘻嘻嘻","consult");
             }else if(map.get(content) == 0){
-                return buildLoginNavi(serverUrl,developer,msg,params[0]);
+                return buildLoginNavi(serverUrl,developer,msg,params[0],"Joanna，能看到吗？进来看看呗，嘻嘻嘻","consult");
+            }else if(map.get(content) == 2){
+                return buildLoginNavi(serverUrl,developer,msg,params[0],"给Joel的回信","consultJoel");
             }else{
                 return buildTip(developer,msg);
             }
@@ -50,12 +52,12 @@ public class EventHandler {
         message.setMsgType(MsgType.text);
         message.setToUserName(msg.getFromUserName());
         message.setFromUserName(developer);
-        message.setContent("这里是烦恼屋，有什么好事，坏事，烦恼事都朝我喷发吧！");
-        message.setCreateTime(new Date().getTime());
+        message.setContent("Welcome to B+ word!");
+        message.setCreateTime(System.currentTimeMillis());
         return message;
     }
 
-    private Message buildLoginNavi(String serverUrl,String developer,Message msg,String user){
+    private Message buildLoginNavi(String serverUrl,String developer,Message msg,String user,String title,String forward){
         Message message = new Message();
         message.setToUserName(msg.getFromUserName());
         message.setFromUserName(developer);
@@ -66,14 +68,14 @@ public class EventHandler {
         message.setArticles(articles);
         List<MessageArticle> items = new ArrayList<MessageArticle>();
         MessageArticle item = new MessageArticle();
-        item.setTitle("Joanna，能看到吗？进来看看呗，嘻嘻嘻");
+        item.setTitle(title);
         item.setDescription("");
         item.setPicUrl(serverUrl + "consult/img/Rain-l.png");
-        item.setUrl(serverUrl + "consult/consult.html?user="+user);
+        item.setUrl(serverUrl + "consult/"+forward+".html?user="+user);
         items.add(item);
         MessageArticle item1 = new MessageArticle();
-        item1.setTitle("什么事情都可以跟我讲哦，因为我是大白");
-        item1.setDescription("点击就真的傻瓜了");
+        item1.setTitle("分享你的故事，分享你的心情，只因感动而在一起");
+        item1.setDescription("");
         item1.setPicUrl(serverUrl+"image/heart.png");
         item1.setUrl(serverUrl+"consult/consultPost.html?user="+user);
         items.add(item1);

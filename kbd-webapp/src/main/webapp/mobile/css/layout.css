@@ -26,13 +26,15 @@ body{
 }
 
 .u-globalAudio{
-    position:fixed;
-    left:10px;
-    top:10px;
+    position:absolute;
+    left:10%;
+    top:10%;
     width:30px;
     height:30px;
-    z-index:9999;
+    z-index:99;
     color:#fff;
-    background-image:url("../img/musice_on.png");
-    background-size:100% 100%;
+    /*background-image:url("../img/music_on.png");*/
+    /*background-size:100% 100%;*/
 }
+
+#music{display:none;height:0;}

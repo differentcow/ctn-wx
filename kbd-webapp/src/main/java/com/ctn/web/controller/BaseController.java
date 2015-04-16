@@ -48,8 +48,10 @@ public class BaseController {
     private String serverUrl;
     @Value("${admin.account}")
     private String admin;
-    @Value("${user.account}")
+    @Value("${user.account.1}")
     private String user;
+    @Value("${user.account.2}")
+    private String user2;
 
     private Map<String,Integer> map;
 
@@ -58,6 +60,9 @@ public class BaseController {
         map = new HashMap<String,Integer>();
         if(org.apache.commons.lang.StringUtils.isNotBlank(user)){
             map.put(user,0);
+        }
+        if(org.apache.commons.lang.StringUtils.isNotBlank(user2)){
+            map.put(user2,2);
         }
         if(org.apache.commons.lang.StringUtils.isNotBlank(admin)){
             map.put(admin,1);

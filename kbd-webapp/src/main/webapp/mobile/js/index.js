@@ -8,12 +8,23 @@ var config = {
 	},
 	'loading': 'loading-ic'
 };
+var audio = document.getElementById('music');
 
+$('.u-globalAudio').bind("tap",function(){
+    if(audio.paused){
+        $('.u-globalAudio').attr('src','img/music_on.png');
+        audio.play();
+    }else{
+        $('.u-globalAudio').attr('src','img/music_off.png');
+        audio.pause();
+    }
+});
 //loading
 window.onload = function(){
 	$('#loading').hide();
     $('.page').picLazyLoad({threshold: 100});
-}
+    audio.play();
+};
 
 var pageIndex = 1,
 	pageTotal = $('.page').length,
