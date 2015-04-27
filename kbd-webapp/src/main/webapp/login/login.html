@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.2.0/css/font-awesome.min.css" />
+    <!--<link rel="stylesheet" type="text/css" href="css/demo.css" />-->
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <style type="text/css">
+        .shareDiv{
+            display: block;
+            position: absolute;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            /*background:url(../img/guide.png) no-repeat center;*/
+            background-size: cover;
+            z-index: 9999;
+        }
+        .btnCls{
+            width:8em;
+            height:2em;
+            overflow:visible;
+            padding:0;
+            border-radius: 5px;
+            color: #ffffff;
+            background-color:transparent;
+            border:1;
+            -webkit-tap-highlight-color:rgba(255,255,255,0);
+        }
+    </style>
+</head>
+
+<body>
+ <div style="background:url(img/login-bg.jpeg) no-repeat center;" class="shareDiv">
+    <div style="position: absolute;top:20%;">
+        <div class="input input--haruki">
+		    <input class="input__field input__field--haruki" type="text" id="input-1" />
+			<label class="input__label input__label--haruki" for="input-1">
+                <span class="input__label-content input__label-content--haruki">Account</span>
+            </label>
+		</div>
+        <div class="input input--haruki">
+            <input class="input__field input__field--haruki" type="password" id="input-2" />
+            <label class="input__label input__label--haruki" for="input-2">
+                <span class="input__label-content input__label-content--haruki">Password</span>
+            </label>
+        </div>
+        <div style="width: 100%;text-align: center;">
+            <button id="btnsure" class="btnCls">Login</button>
+        </div>
+    </div>
+ </div>
+</body>
+<script src="js/zepto.min.js"></script>
+<script src="js/classie.js"></script>
+<script>
+    (function() {
+        // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
+        if (!String.prototype.trim) {
+            (function() {
+                // Make sure we trim BOM and NBSP
+                var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+                String.prototype.trim = function() {
+                    return this.replace(rtrim, '');
+                };
+            })();
+        }
+
+        [].slice.call( document.querySelectorAll( 'input.input__field' ) ).forEach( function( inputEl ) {
+            // in case the input is already filled..
+            if( inputEl.value.trim() !== '' ) {
+                classie.add( inputEl.parentNode, 'input--filled' );
+            }
+
+            // events:
+            inputEl.addEventListener( 'focus', onInputFocus );
+            inputEl.addEventListener( 'blur', onInputBlur );
+        } );
+
+        function onInputFocus( ev ) {
+            classie.add( ev.target.parentNode, 'input--filled' );
+        }
+
+        function onInputBlur( ev ) {
+            if( ev.target.value.trim() === '' ) {
+                classie.remove( ev.target.parentNode, 'input--filled' );
+            }
+        }
+    })();
+    $(function(){
+        $('.btnCls').bind('tap',function(){
+            $.ajax({
+                url:'../service/login/login.json',
+                type:'POST',
+                contentType:'application/json',
+                data:JSON.stringify({account:$('#input-1').val(),password:$('#input-2').val()}),
+                dataType:'json',
+                success:function(data,status,xhr){
+                    alert(JSON.stringify(data));
+                    window.location.href = data.url;
+                }
+            });
+        });
+    });
+</script>
+</html>

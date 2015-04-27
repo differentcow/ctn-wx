@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0;" name="viewport" />
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta content="telephone=no" name="format-detection" />
+  <title>To Joel</title>
+
+  <!--<link href="css/consult.css"/>-->
+   <style>
+       /* latin-ext */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Lato Regular'), local('Lato-Regular'), url(http://fonts.gstatic.com/s/lato/v11/UyBMtLsHKBKXelqf4x7VRQ.woff2) format('woff2');
+           unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Lato Regular'), local('Lato-Regular'), url(http://fonts.gstatic.com/s/lato/v11/1YwB1sO8YE1Lyjf12WNiUA.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       /* latin-ext */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 900;
+           src: local('Lato Black'), local('Lato-Black'), url(http://fonts.gstatic.com/s/lato/v11/R4a6fty3waPci7C44H8AjvY6323mHUZFJMgTvxaG2iE.woff2) format('woff2');
+           unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Lato';
+           font-style: normal;
+           font-weight: 900;
+           src: local('Lato Black'), local('Lato-Black'), url(http://fonts.gstatic.com/s/lato/v11/tI4j516nok_GrVf4dhunkg.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       /* latin */
+       @font-face {
+           font-family: 'Montez';
+           font-style: normal;
+           font-weight: 400;
+           src: local('Montez'), local('Montez-Regular'), url(http://fonts.gstatic.com/s/montez/v6/aq8el3-0osHIcFK6bXAPkw.woff2) format('woff2');
+           unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+       }
+       .sparkley {
+           background: #3e5771;
+           color: white;
+           border: none;
+           padding: 16px 36px;
+           font-weight: normal;
+           font-size: 1.2em;
+           border-radius: 3px;
+           transition: all 0.25s ease;
+           /*box-shadow: 0 38px 32px -23px black;*/
+           /*margin: 0 1em 1em;*/
+       }
+       /*.sparkley:hover {
+           background: #2c3e50;
+           color: rgba(255, 255, 255, 0.2);
+       }*/
+
+       html {
+           font-family: Lato;
+           font-weight: 200;
+           font-size: 1em;
+           text-align: center;
+           color: #ddd;
+           min-height: 100%;
+           background: #092756;
+           background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -webkit-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -o-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -o-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -o-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), -ms-linear-gradient(top, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), -ms-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+           background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(35, 24, 82, 0.22) 10%, rgba(138, 114, 76, 0) 40%), linear-gradient(to bottom, rgba(57, 173, 219, 0.25) 0%, rgba(42, 60, 87, 0.4) 100%), linear-gradient(135deg, #670d10 0%, #092756 100%);
+       }
+       html body {
+           padding: 10px;
+       }
+
+       h1 span, h2 span, h3 span {
+           font-family: Montez;
+           font-size: 1.9em;
+           font-weight: 300;
+           margin: 0 0.3em;
+           color: #ff0080;
+       }
+
+       h1 {
+           font-size: 1.9em;
+           width: 100%;
+           margin: 0 auto 1em;
+           text-shadow: 0 2px 1px black;
+       }
+
+       .img {
+           /*margin: 40px auto 0;*/
+           /*width: 500px;*/
+           display: block;
+       }
+       .img img {
+           width: 100%;
+           border-radius: 5px;
+       }
+
+       p {
+           padding: 5px 10px;
+           display: inline-block;
+           margin: 10px auto;
+       }
+   </style>
+
+</head>
+
+<body>
+
+<h1><span>Moon</span> House!</h1>
+<h3>I am B+, I will always be with you.</h3>
+<div class="img">
+  <img id="image" src="img/Rain-l.png">
+</div>
+  <p>对不起，我只想你开心</p>
+  <input type="hidden" id="store_user"/>
+  <div class="sparkley" style="text-align: left;" id="content">
+
+  </div>
+<div style="width: 100%;margin-top: 5px;">
+    <a href="javascript:void(0)" id="click_post" style="color: #ffffff;">如果你有什么烦恼，可以点击这里哦</a>
+</div>
+  <script src='js/jquery-1.11.1.min.js'></script>
+  <script src='js/rbeix.js'></script>
+  <script src="js/index.js"></script>
+  <script type="text/javascript">
+      $(function(){
+          var param = window.location.search;
+          var user = '';
+          if(param.indexOf('?') != -1){
+              user = param.substr(param.indexOf('?'),param.length);
+              $('#store_user').val(user);
+          }
+          $('#click_post,#click_content_s').click(function(){
+              window.location.href = "consultPost.html?user="+user;
+          });
+          /*var deferred = $.getJSON("/wx/service/trouble/view?user="+user);
+          $.when(deferred).done(function (response) {
+              if (response.code == 1) {
+                  $('#content').html(response.data);
+              }
+          }).fail(function (error) {
+              console.log(error);
+          });*/
+      });
+  </script>
+
+
+</body>
+
+</html>
