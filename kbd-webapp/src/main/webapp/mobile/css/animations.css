@@ -1354,7 +1354,7 @@
 
 .fadeIn{
     -webkit-animation-name: fadeIn; /*动画名称*/
-    -webkit-animation-duration: 2s; /*动画持续时间*/
+    -webkit-animation-duration: 1s; /*动画持续时间*/
     -webkit-animation-iteration-count: 1; /*动画次数*/
     -webkit-animation-delay: 0s; /*延迟时间*/
 }

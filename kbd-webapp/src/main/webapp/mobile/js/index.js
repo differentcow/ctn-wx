@@ -22,12 +22,7 @@ $('.u-globalAudio').bind("tap",function(){
 //loading
 window.onload = function(){
 	$('#loading').hide();
-    $('.page').picLazyLoad({threshold: 100});
 
-    $('#sub_title_1').addClass('fadeIn');
-    $('#sub_content_1').addClass('fadeIn');
-    $('#sub_title_1').removeClass('hide');
-    $('#sub_content_1').removeClass('hide');
 //    $('#sub_1').find('div').removeClass('hide');
 
     audio.play();
@@ -38,9 +33,18 @@ var pageIndex = 1,
 	towards = { up:1, right:2, down:3, left:4},
 	isAnimating = false;
 
+
 //禁用手机默认的触屏滚动行为
 document.addEventListener('touchmove',function(event){
 	event.preventDefault(); },false);
+
+$('.page').picLazyLoad({threshold: 100});
+
+$('#sub_title_1').addClass('fadeIn');
+$('#sub_content_1').addClass('fadeIn');
+$('#sub_title_1').removeClass('hide');
+$('#sub_content_1').removeClass('hide');
+
 
 $(document).swipeUp(function(){
 	if (isAnimating) return;

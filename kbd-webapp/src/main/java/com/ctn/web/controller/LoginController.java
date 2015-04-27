@@ -1,5 +1,7 @@
 package com.ctn.web.controller;
 
+import com.ctn.util.SendMail;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +17,18 @@ public class LoginController {
 	
     private Map<String,Object> map;
 
+    @Value("${mail.server.host}")
+    private String host;
+
+    @Value("${mail.server.username}")
+    private String username;
+
+    @Value("${mail.server.password}")
+    private String password;
+
+    @Value("${mail.server.address}")
+    private String address;
+
     @PostConstruct
     public void init(){
         map = new HashMap<String,Object>();
@@ -27,6 +41,9 @@ public class LoginController {
         map.put("code",0);
         if ("zhengdan".equals(account)){
             req.getSession().setAttribute("barry",account);
+            SendMail sm = new SendMail(host,username,password);
+            sm.setAddress(address,"different_cow@163.com","Trouble House Consult");
+            sm.send("Dear barry:\n\n\t\tEnter the hide mode!\n\nBest Regards,\n"+account);
             map.put("url","../mobile/me.html");
             map.put("code",1);
         }
