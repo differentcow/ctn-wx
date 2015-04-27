@@ -20,9 +20,10 @@ public class MobileSecurityFilter implements Filter{
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-
         HttpSession session = req.getSession();
-        if (session.getAttribute("username") != null) {//登录后才能访问
+        if ("/mobile/me.html".equals(req.getServletPath()) && session.getAttribute("username") != null && session.getAttribute("barry") != null){
+            chain.doFilter(request, response);
+        }else if (session.getAttribute("username") != null) {//登录后才能访问
             chain.doFilter(request, response);
         } else {
             res.sendRedirect("../login/login.html");

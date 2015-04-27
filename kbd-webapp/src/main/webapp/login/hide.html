@@ -41,17 +41,11 @@
         <div class="input input--haruki">
 		    <input class="input__field input__field--haruki" type="text" id="input-1" />
 			<label class="input__label input__label--haruki" for="input-1">
-                <span class="input__label-content input__label-content--haruki">Account</span>
+                <span class="input__label-content input__label-content--haruki">请输入你的名字拼音</span>
             </label>
 		</div>
-        <div class="input input--haruki">
-            <input class="input__field input__field--haruki" type="password" id="input-2" />
-            <label class="input__label input__label--haruki" for="input-2">
-                <span class="input__label-content input__label-content--haruki">Password</span>
-            </label>
-        </div>
         <div style="width: 100%;text-align: center;">
-            <button id="btnsure" class="btnCls">Login</button>
+            <button id="btnsure" class="btnCls">Go ahead!</button>
         </div>
     </div>
  </div>
@@ -95,15 +89,15 @@
     $(function(){
         $('.btnCls').bind('tap',function(){
             $.ajax({
-                url:'../service/login/login.json',
+                url:'../service/login/hide.json',
                 type:'POST',
                 contentType:'application/json',
-                data:JSON.stringify({account:$('#input-1').val(),password:$('#input-2').val()}),
+                data:JSON.stringify({account:$('#input-1').val()}),
                 dataType:'json',
                 success:function(data,status,xhr){
-                    if(data.state == 1){
+                    if(data.code == 1){
                         window.location.href = data.url;
-                    }else {
+                    }else{
                         alert('Error');
                     }
                 }

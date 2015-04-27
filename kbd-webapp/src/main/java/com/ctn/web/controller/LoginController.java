@@ -21,17 +21,29 @@ public class LoginController {
     }
 
 
+    @RequestMapping(value = "/hide", method = RequestMethod.POST)
+    public Object hideLogin(HttpServletRequest req,@RequestBody Map<String,String> values) {
+        String account = values.get("account");
+        map.put("code",0);
+        if ("zhengdan".equals(account)){
+            req.getSession().setAttribute("barry",account);
+            map.put("url","../mobile/me.html");
+            map.put("code",1);
+        }
+        return map;
+    }
+
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public Object login(HttpServletRequest req,@RequestBody Map<String,String> values) {
         String account = values.get("account");
         String password = values.get("password");
         if("barry".equals(account) && "19870415".equals(password)){
             map.put("state",1);
-            map.put("url","../mobile/test.html");
+            map.put("url","hide.html");
             req.getSession().setAttribute("username",account);
-        }else if("test".equals(account) && "123456".equals(password)){
+        }else if("joanna".equals(account) && "19890701".equals(password)){
             map.put("state",1);
-            map.put("url","../mobile/test.html");
+            map.put("url","../mobile/screen.html");
             req.getSession().setAttribute("username",account);
         }else{
             map.put("state",0);
